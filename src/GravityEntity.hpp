@@ -15,7 +15,7 @@ public:
 
 	virtual void process(sf::Int64 delta)
 	{
-		moveVector.y += gravityConstant;
+		moveVector.y += gravityConstant * DELTA_CORRECTION;
 		if (moveVector.y > terminalVelocity)
 			moveVector.y = terminalVelocity;
 

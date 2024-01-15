@@ -1,8 +1,8 @@
 #pragma once
 
-#define DELTA_CORRECTION delta / 8192
-#define D_GRAV_CONSTANT 0.07f
-#define D_TERMINAL_VEL 2.2f
+#define DELTA_CORRECTION ((float)delta / 8192.f)
+#define D_GRAV_CONSTANT 0.08f
+#define D_TERMINAL_VEL 2.4f
 
 // class GlobalVariables
 // {

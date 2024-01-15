@@ -81,18 +81,45 @@ public:
 	{
 		controls.update();
 
-		float horizontalInput = controls.getKey(3).pressed - controls.getKey(2).pressed;
+		float horizontalInput = (float)controls.getKey(3).pressed - (float)controls.getKey(2).pressed;
+		const bool running    = controls.getKey(5).pressed;
 
-		moveVector.x = horizontalInput;
+		// running
+		if (running && horizontalInput != 0.f)
+		{
+			if (fabs(moveVector.x) < walkSpeed)
+				moveVector.x = horizontalInput * walkSpeed;
 
-		if (onFloor)
-			canJumpTimer.reset();
+			if ((moveVector.x > 0 && horizontalInput > 0) || (moveVector.x < 0 && horizontalInput < 0))
+				moveVector.x += horizontalInput * acc * DELTA_CORRECTION;
+			else
+				moveVector.x += horizontalInput * turnAroundDeAcc * DELTA_CORRECTION;
+
+			if (moveVector.x > maxRunSpeed)
+				moveVector.x = maxRunSpeed;
+			else if (moveVector.x < -maxRunSpeed)
+				moveVector.x = -maxRunSpeed;
+		}
+		else
+		{
+			if (std::fabs(moveVector.x) > walkSpeed)
+				moveVector.x -= std::fabs(moveVector.x) / moveVector.x * deAcc * DELTA_CORRECTION;
+			else
+				moveVector.x = horizontalInput * walkSpeed;
+		}
+
+		// jumping
 		if (!canJumpTimer.tick(delta) && controls.getKey(4).justPressed)
 		{
-			moveVector.y = -maxJumpHeight;
+			const float secretCrustyCrabFormula =
+				(std::max(std::fabs(moveVector.x), walkSpeed) / maxRunSpeed) * maxJumpSpeed * 0.45f +
+				maxJumpSpeed * 0.55;
+			moveVector.y = -secretCrustyCrabFormula;
 			canJumpTimer.block();
 			bigJump = true;
 		}
+		if (onFloor)
+			canJumpTimer.reset();
 		if (bigJump && moveVector.y < 0 && controls.getKey(4).justReleased)
 		{
 			moveVector.y /= 2.f;
@@ -116,7 +143,12 @@ private:
 
 	Timer canJumpTimer = Timer(0.05f);
 
-	const float maxJumpHeight = 3.5f;
+	const float maxJumpSpeed = 3.2f;
+	bool bigJump             = false;
 
-	bool bigJump = false;
+	const float walkSpeed       = 0.6f;
+	const float maxRunSpeed     = 1.4f;
+	const float acc             = 0.01f;
+	const float deAcc           = 0.08f;
+	const float turnAroundDeAcc = 0.06f;
 };

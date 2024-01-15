@@ -58,7 +58,7 @@ public:
 			for (const auto &coord : chunksVector)
 			{
 				auto &&vector = outCollision[coord];
-				if (_tccRound2(outEntity, vector, debugPrint))
+				if (_tccRound2(outEntity, vector, toRet, debugPrint))
 					thirdRound = true;
 			}
 		if (thirdRound)
@@ -114,7 +114,27 @@ public:
 private:
 	CollisionAlgorithms() = default;
 
-	const float tccTolerance = 1.7f;
+	const float tccTolerance = 2.f;
+
+	void checkCollisionResults(const sf::Vector2f &vec, CollisionResults &outCurrentResults)
+	{
+		if (std::fabs(vec.x) > 0.1)
+		{
+			outCurrentResults.shouldResetHor = true;
+			if (vec.x > 0)
+				outCurrentResults.ejectedRight = true;
+			else
+				outCurrentResults.ejectedLeft = true;
+		}
+		if (std::fabs(vec.y) > 0.1)
+		{
+			outCurrentResults.shouldResetVer = true;
+			if (vec.y > 0)
+				outCurrentResults.ejectedDown = true;
+			else
+				outCurrentResults.ejectedUp = true;
+		}
+	}
 
 	bool _tccRound1(HitboxEntity &outEntity, std::vector<CollisionBody> &outVector, CollisionResults &outCurrentResults)
 	{
@@ -135,22 +155,7 @@ private:
 					auto curVec = outEntity.accessCollider().getEjectionVector(cb, overlapVec);
 					outEntity.move(curVec);
 
-					if (std::fabs(curVec.x) > 0.1)
-					{
-						outCurrentResults.shouldResetHor = true;
-						if (curVec.x > 0)
-							outCurrentResults.ejectedRight = true;
-						else
-							outCurrentResults.ejectedLeft = true;
-					}
-					if (std::fabs(curVec.y) > 0.1)
-					{
-						outCurrentResults.shouldResetVer = true;
-						if (curVec.y > 0)
-							outCurrentResults.ejectedDown = true;
-						else
-							outCurrentResults.ejectedUp = true;
-					}
+					checkCollisionResults(curVec, outCurrentResults);
 				}
 				else
 				{
@@ -164,7 +169,8 @@ private:
 		return toRet;
 	}
 
-	bool _tccRound2(HitboxEntity &outEntity, std::vector<CollisionBody> &outVector, bool debugPrint)
+	bool _tccRound2(HitboxEntity &outEntity, std::vector<CollisionBody> &outVector, CollisionResults &outCurrentResults,
+					bool debugPrint)
 	{
 		bool toRet = false;
 		for (auto &&cb : outVector)
@@ -184,6 +190,8 @@ private:
 								  << -curVec.y << std::endl;
 
 					outEntity.move(curVec);
+
+					checkCollisionResults(curVec, outCurrentResults);
 
 					cb.setCacheVector(sf::Vector2f(0, 0));
 				}
