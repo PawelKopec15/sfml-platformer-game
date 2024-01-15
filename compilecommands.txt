@@ -1,0 +1,7 @@
+[
+  {
+    "command": "C:\\MinGW\\bin\\g++.exe C:\\Users\\PK\\Documents\\Projekty\\Cpp\\vscode_sfml\\random2\\src\\main.cpp",
+    "directory": "C:/Users/PK/Documents/Projekty/Cpp/vscode_sfml/random2/build",
+    "file": "C:/Users/PK/Documents/Projekty/Cpp/vscode_sfml/random2/src/main.cpp"
+  }
+]
