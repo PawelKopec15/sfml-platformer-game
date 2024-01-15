@@ -63,31 +63,13 @@ int main()
 
 		player.process(delta);
 
-		// Test coloring and collision
-		auto colRes = CollisionAlgorithms::Get().StaticTripleCollisionCheck(level.Collision, player, {}, true);
-
-		if (colRes.ejectedUp)
-			player.setCanJump(true);
-
-		if (colRes.shouldResetHor && player.getNextFrameResetHor())
-			player.setMoveVector(sf::Vector2f(0, player.getMoveVector().y));
-		else if (colRes.shouldResetHor)
-			player.setNextFrameResetHor(true);
-		else if (player.getNextFrameResetHor())
-			player.setNextFrameResetHor(false);
-
-		if (colRes.shouldResetVer && player.getNextFrameResetVer())
-			player.setMoveVector(sf::Vector2f(player.getMoveVector().x, 0));
-		else if (colRes.shouldResetVer)
-			player.setNextFrameResetVer(true);
-		else if (player.getNextFrameResetVer())
-			player.setNextFrameResetVer(false);
+		// Collision
+		auto colRes = CollisionAlgorithms::Get().StaticTripleCollisionForHitboxEntity(level.Collision, player, {});
 
 		// Debug text
 
-		debug_info_text.setString("Elapsed time: " + std::to_string(delta) +
-								  "\nFPS: " + std::to_string(1000000 / delta) +
-								  "\t can_jump: " + std::to_string(player.getCanJump()));
+		debug_info_text.setString("delta: " + std::to_string(delta) + "\nFPS: " + std::to_string(1000000 / delta) +
+								  "\t jump timer: " + std::to_string(player.getCanJump()));
 
 		// ||--------------------------------------------------------------------------------||
 		// ||                                     Render                                     ||

@@ -85,10 +85,18 @@ public:
 
 		moveVector.x = horizontalInput;
 
+		if (onFloor)
+			canJumpTimer.reset();
 		if (!canJumpTimer.tick(delta) && controls.getKey(4).justPressed)
 		{
 			moveVector.y = -maxJumpHeight;
 			canJumpTimer.block();
+			bigJump = true;
+		}
+		if (bigJump && moveVector.y < 0 && controls.getKey(4).justReleased)
+		{
+			moveVector.y /= 2.f;
+			bigJump = false;
 		}
 
 		this->HitboxEntity::process(delta);
@@ -106,7 +114,9 @@ public:
 private:
 	Controls controls;
 
-	Timer canJumpTimer = Timer(0.1f);
+	Timer canJumpTimer = Timer(0.05f);
 
 	const float maxJumpHeight = 3.5f;
+
+	bool bigJump = false;
 };

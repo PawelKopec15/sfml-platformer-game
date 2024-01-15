@@ -45,6 +45,10 @@ public:
 	bool getNextFrameResetHor() const { return nextFrameResetHor; }
 	bool getNextFrameResetVer() const { return nextFrameResetVer; }
 
+	void setOnFloor(bool val) { onFloor = val; }
+	void setOnCeil(bool val) { onCeil = val; }
+	void setOnWall(bool val) { onWall = val; }
+
 protected:
 	CollisionBody collider;
 	Hitbox hurtBox;
@@ -52,4 +56,8 @@ protected:
 
 	bool nextFrameResetHor = false;
 	bool nextFrameResetVer = false;
+
+	bool onFloor = false;
+	bool onCeil  = false;
+	bool onWall  = false;
 };

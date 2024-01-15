@@ -71,6 +71,46 @@ public:
 		return toRet;
 	}
 
+	CollisionResults StaticTripleCollisionForHitboxEntity(
+		std::map<sf::Vector2f, std::vector<CollisionBody>, Vector2fCompare> &outCollision, HitboxEntity &outEntity,
+		const std::vector<sf::Vector2f> chunks, bool debugPrint = false)
+	{
+		auto colRes =
+			CollisionAlgorithms::Get().StaticTripleCollisionCheck(outCollision, outEntity, chunks, debugPrint);
+
+		if (colRes.shouldResetHor && outEntity.getNextFrameResetHor())
+		{
+			outEntity.setMoveVector(sf::Vector2f(0, outEntity.getMoveVector().y));
+			outEntity.setOnWall(true);
+		}
+		else if (colRes.shouldResetHor)
+			outEntity.setNextFrameResetHor(true);
+		else if (outEntity.getNextFrameResetHor())
+		{
+			outEntity.setNextFrameResetHor(false);
+			outEntity.setOnWall(false);
+		}
+
+		if (colRes.shouldResetVer && outEntity.getNextFrameResetVer())
+		{
+			outEntity.setMoveVector(sf::Vector2f(outEntity.getMoveVector().x, 0));
+			if (colRes.ejectedUp)
+				outEntity.setOnFloor(true);
+			if (colRes.ejectedDown)
+				outEntity.setOnCeil(true);
+		}
+		else if (colRes.shouldResetVer)
+			outEntity.setNextFrameResetVer(true);
+		else if (outEntity.getNextFrameResetVer())
+		{
+			outEntity.setNextFrameResetVer(false);
+			outEntity.setOnFloor(false);
+			outEntity.setOnCeil(false);
+		}
+
+		return colRes;
+	}
+
 private:
 	CollisionAlgorithms() = default;
 
