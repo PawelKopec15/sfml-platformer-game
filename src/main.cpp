@@ -65,11 +65,9 @@ int main()
 
 		// Test coloring and collision
 		auto colRes = CollisionAlgorithms::Get().StaticTripleCollisionCheck(level.Collision, player, {}, true);
-		
+
 		if (colRes.ejectedUp)
 			player.setCanJump(true);
-		else
-			player.setCanJump(false);
 
 		if (colRes.shouldResetHor && player.getNextFrameResetHor())
 			player.setMoveVector(sf::Vector2f(0, player.getMoveVector().y));

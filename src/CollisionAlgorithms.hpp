@@ -74,7 +74,7 @@ public:
 private:
 	CollisionAlgorithms() = default;
 
-	const float tccTolerance = 1.5f;
+	const float tccTolerance = 1.7f;
 
 	bool _tccRound1(HitboxEntity &outEntity, std::vector<CollisionBody> &outVector, CollisionResults &outCurrentResults)
 	{

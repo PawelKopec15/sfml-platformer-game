@@ -3,18 +3,70 @@
 #include <SFML/Graphics.hpp>
 
 #include "HitboxEntity.hpp"
+#include "Timer.hpp"
 
-struct Controls
+class Controls
 {
-	sf::Keyboard::Key keyUp    = sf::Keyboard::Up;
-	sf::Keyboard::Key keyDown  = sf::Keyboard::Down;
-	sf::Keyboard::Key keyLeft  = sf::Keyboard::Left;
-	sf::Keyboard::Key keyRight = sf::Keyboard::Right;
+public:
+	struct Key
+	{
+		sf::Keyboard::Key keyBind;
+		bool pressed      = false;
+		bool justPressed  = false;
+		bool justReleased = false;
 
-	sf::Keyboard::Key keyJump   = sf::Keyboard::Z;
-	sf::Keyboard::Key keyRun    = sf::Keyboard::X;
-	sf::Keyboard::Key keyStart  = sf::Keyboard::Enter;
-	sf::Keyboard::Key keySelect = sf::Keyboard::Space;
+		explicit Key(sf::Keyboard::Key keyBind) : keyBind(keyBind) {}
+	};
+
+	Controls()  = default;
+	~Controls() = default;
+
+	void update()
+	{
+		for (auto&& key : arr)
+		{
+			bool now = sf::Keyboard::isKeyPressed(key.keyBind);
+
+			if (now && !key.pressed)
+				key.justPressed = true;
+			else
+				key.justPressed = false;
+
+			if (!now && key.pressed)
+				key.justReleased = true;
+			else
+				key.justReleased = false;
+
+			key.pressed = now;
+		}
+	}
+
+	Key getKey(uint32_t index) { return arr[index]; }
+
+private:
+	void _updateKeyStatus()
+	{
+		for (auto&& key : arr)
+		{
+			bool now = sf::Keyboard::isKeyPressed(key.keyBind);
+
+			if (now && !key.pressed)
+				key.justPressed = true;
+			else
+				key.justPressed = false;
+
+			if (!now && key.pressed)
+				key.justReleased = true;
+			else
+				key.justReleased = false;
+
+			key.pressed = now;
+		}
+	}
+
+	std::array<Key, 8> arr = {Key(sf::Keyboard::Up),    Key(sf::Keyboard::Down), Key(sf::Keyboard::Left),
+							  Key(sf::Keyboard::Right), Key(sf::Keyboard::Z),    Key(sf::Keyboard::LShift),
+							  Key(sf::Keyboard::Enter), Key(sf::Keyboard::Space)};
 };
 
 class Player : public HitboxEntity
@@ -27,25 +79,34 @@ public:
 
 	void process(sf::Int64 delta) override
 	{
-		float horizontalInput =
-			sf::Keyboard::isKeyPressed(controls.keyRight) - sf::Keyboard::isKeyPressed(controls.keyLeft);
+		controls.update();
+
+		float horizontalInput = controls.getKey(3).pressed - controls.getKey(2).pressed;
 
 		moveVector.x = horizontalInput;
 
-		if (canJump && sf::Keyboard::isKeyPressed(controls.keyJump))
+		if (!canJumpTimer.tick(delta) && controls.getKey(4).justPressed)
 		{
-			moveVector.y = -3.5f;
-			canJump      = false;
+			moveVector.y = -maxJumpHeight;
+			canJumpTimer.block();
 		}
 
 		this->HitboxEntity::process(delta);
 	}
 
-	void setCanJump(bool val) { canJump = val; }
-	bool getCanJump() const { return canJump; }
+	void setCanJump(bool val)
+	{
+		if (val)
+			canJumpTimer.reset();
+		else
+			canJumpTimer.block();
+	}
+	sf::Int64 getCanJump() const { return canJumpTimer.getTimeLeft(); }
 
 private:
 	Controls controls;
 
-	bool canJump = false;
+	Timer canJumpTimer = Timer(0.1f);
+
+	const float maxJumpHeight = 3.5f;
 };
