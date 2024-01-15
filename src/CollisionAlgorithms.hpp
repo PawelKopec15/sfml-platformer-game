@@ -185,7 +185,7 @@ private:
 					auto curVec = outEntity.accessCollider().getEjectionVector(cb, overlapVec);
 
 					if (debugPrint)
-						std::cout << "-2\tcache: " << std::fixed << std::setprecision(4) << cb.getCacheVector().x
+						std::cout << "-2 YES\tcache: " << std::fixed << std::setprecision(4) << cb.getCacheVector().x
 								  << " \t" << cb.getCacheVector().y << " \tejection: " << -curVec.x << " \t"
 								  << -curVec.y << std::endl;
 
@@ -197,6 +197,9 @@ private:
 				}
 				else
 				{
+					if (debugPrint)
+						std::cout << "-2 NO\tcache: " << std::fixed << std::setprecision(4) << cb.getCacheVector().x
+								  << " \t" << cb.getCacheVector().y << std::endl;
 					cb.setCacheVector(overlapVec);
 					toRet = true;
 				}
@@ -218,12 +221,15 @@ private:
 				auto curVec = outEntity.accessCollider().getEjectionVector(cb, overlapVec);
 
 				if (debugPrint)
-					std::cout << "---3!!\tcache: " << std::fixed << std::setprecision(4) << cb.getCacheVector().x
+					std::cout << "---3!! YES!!\tcache: " << std::fixed << std::setprecision(4) << cb.getCacheVector().x
 							  << " \t" << cb.getCacheVector().y << " \tejection:\t" << -curVec.x << " \t" << -curVec.y
 							  << std::endl;
 
 				outEntity.move(curVec);
 			}
+			else if (debugPrint)
+				std::cout << "---3!! NO\tcache: " << std::fixed << std::setprecision(4) << cb.getCacheVector().x
+						  << " \t" << cb.getCacheVector().y << std::endl;
 		}
 	}
 };

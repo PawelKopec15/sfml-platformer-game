@@ -73,7 +73,7 @@ class Player : public HitboxEntity
 {
 public:
 	Player(const sf::Vector2f& position, Controls controls)
-		: HitboxEntity(position, sf::Vector2f(14, 14)), controls(controls)
+		: HitboxEntity(position, sf::Vector2f(14, 12)), controls(controls)
 	{}
 	~Player() override = default;
 
