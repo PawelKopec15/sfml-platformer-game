@@ -12,6 +12,8 @@ public:
 		collisionBox.setPosition(position);
 		collisionBox.setSize(size);
 		collisionBox.setFillColor(color);
+		collisionBox.setOutlineColor(sf::Color(255, 255, 255, 96));
+		collisionBox.setOutlineThickness(-0.5f);
 	}
 	~CollisionBody() = default;
 
@@ -30,14 +32,14 @@ public:
 	const sf::Vector2f& getCacheVector() const { return cacheVector; }
 	void setCacheVector(const sf::Vector2f& val) { cacheVector = val; }
 
-	bool collidesWith(CollisionBody& other)
+	bool intersects(CollisionBody& other)
 	{
 		return other.getCollisionBox().getGlobalBounds().intersects(collisionBox.getGlobalBounds());
 	}
 
 	sf::Vector2f getOverlapVector(CollisionBody& other)
 	{
-		if (!collidesWith(other))
+		if (!intersects(other))
 			return sf::Vector2f(0, 0);
 
 		const auto selfBounds  = collisionBox.getGlobalBounds();

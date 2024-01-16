@@ -1,6 +1,8 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <deque>
+#include <memory>
 
 #include "CollisionBody.hpp"
 #include "HitboxEntity.hpp"
@@ -30,8 +32,8 @@ public:
 	CollisionAlgorithms &operator=(const CollisionAlgorithms &) = delete;
 
 	CollisionResults StaticTripleCollisionCheck(
-		std::map<sf::Vector2f, std::vector<CollisionBody>, Vector2fCompare> &outCollision, HitboxEntity &outEntity,
-		const std::vector<sf::Vector2f> chunks, bool debugPrint = false)
+		std::map<sf::Vector2f, std::vector<std::shared_ptr<CollisionBody>>, Vector2fCompare> &outCollision,
+		HitboxEntity &outEntity, const std::vector<sf::Vector2f> chunks, bool debugPrint = false)
 	{
 		auto chunksVector = chunks;
 
@@ -42,38 +44,66 @@ public:
 				chunksVector.push_back(pair.first);
 		}
 
-		bool secondRound = false;
-		bool thirdRound  = false;
+		std::deque<std::shared_ptr<CollisionBody>> collisionBodies;
+		for (const auto &coord : chunksVector)
+		{
+			for (auto &cb : outCollision[coord])
+			{
+				cb->setColor(sf::Color(180, 180, 180, 128));
+				if (cb->intersects(outEntity.accessCollider()))
+				{
+					cb->setCacheVector(sf::Vector2f(0, 0));
+					collisionBodies.push_back(cb);
+				}
+			}
+		}
 
 		CollisionResults toRet;
 
-		for (const auto &coord : chunksVector)
+		for (int i = 0; i < 3; ++i)
 		{
-			auto &&vector = outCollision[coord];
+			for (auto it = collisionBodies.begin(); it != collisionBodies.end(); ++it)
+			{
+				if ((*it)->intersects(outEntity.accessCollider()))
+				{
+					auto overlapVec = outEntity.accessCollider().getOverlapVector(*(*it));
 
-			if (_tccRound1(outEntity, vector, toRet))
-				secondRound = true;
+					auto check = std::fabs(overlapVec.x) / std::fabs(overlapVec.y);
+
+					if (check > tccTolerance || check < 1.f / tccTolerance || overlapVec == (*it)->getCacheVector() ||
+						i > 1)
+					{
+						(*it)->setColor(sf::Color(0, 200, i * 120, 128));
+
+						auto curVec = outEntity.accessCollider().getEjectionVector(*(*it), overlapVec);
+						outEntity.move(curVec);
+
+						checkCollisionResults(curVec, toRet);
+
+						(*it)->setCacheVector(sf::Vector2f(0, 0));
+
+						if (debugPrint && i > 0)
+							std::cout << "-" << i + 1 << " YES\tcache: " << std::fixed << std::setprecision(4)
+									  << (*it)->getCacheVector().x << " \t" << (*it)->getCacheVector().y
+									  << " \tejection: " << -curVec.x << " \t" << -curVec.y << std::endl;
+					}
+					else
+					{
+						(*it)->setCacheVector(overlapVec);
+						if (debugPrint && i > 0)
+							std::cout << "-" << i + 1 << " NO\tcache: " << std::fixed << std::setprecision(4)
+									  << (*it)->getCacheVector().x << " \t" << (*it)->getCacheVector().y << std::endl;
+					}
+				}
+			}
 		}
-		if (secondRound)
-			for (const auto &coord : chunksVector)
-			{
-				auto &&vector = outCollision[coord];
-				if (_tccRound2(outEntity, vector, toRet, debugPrint))
-					thirdRound = true;
-			}
-		if (thirdRound)
-			for (const auto &coord : chunksVector)
-			{
-				auto &&vector = outCollision[coord];
-				_tccRound3(outEntity, vector, debugPrint);
-			}
 
 		return toRet;
 	}
 
 	CollisionResults StaticTripleCollisionForHitboxEntity(
-		std::map<sf::Vector2f, std::vector<CollisionBody>, Vector2fCompare> &outCollision, HitboxEntity &outEntity,
-		const std::vector<sf::Vector2f> chunks, bool debugPrint = false)
+		std::map<sf::Vector2f, std::vector<std::shared_ptr<CollisionBody>>, Vector2fCompare> &outCollision,
+		HitboxEntity &outEntity, const std::vector<sf::Vector2f> chunks, bool debugPrint = false)
 	{
 		auto colRes =
 			CollisionAlgorithms::Get().StaticTripleCollisionCheck(outCollision, outEntity, chunks, debugPrint);
@@ -114,7 +144,7 @@ public:
 private:
 	CollisionAlgorithms() = default;
 
-	const float tccTolerance = 2.f;
+	const float tccTolerance = 1.8f;
 
 	void checkCollisionResults(const sf::Vector2f &vec, CollisionResults &outCurrentResults)
 	{
@@ -133,103 +163,6 @@ private:
 				outCurrentResults.ejectedDown = true;
 			else
 				outCurrentResults.ejectedUp = true;
-		}
-	}
-
-	bool _tccRound1(HitboxEntity &outEntity, std::vector<CollisionBody> &outVector, CollisionResults &outCurrentResults)
-	{
-		bool toRet = false;
-		for (auto &&cb : outVector)
-		{
-			cb.setCacheVector(sf::Vector2f(0, 0));
-
-			if (cb.collidesWith(outEntity.accessCollider()))
-			{
-				cb.setColor(sf::Color(0, 200, 0, 128));
-
-				auto overlapVec = outEntity.accessCollider().getOverlapVector(cb);
-
-				auto check = std::fabs(overlapVec.x) / std::fabs(overlapVec.y);
-				if (check > tccTolerance || check < 1.f / tccTolerance)
-				{
-					auto curVec = outEntity.accessCollider().getEjectionVector(cb, overlapVec);
-					outEntity.move(curVec);
-
-					checkCollisionResults(curVec, outCurrentResults);
-				}
-				else
-				{
-					cb.setCacheVector(overlapVec);
-					toRet = true;
-				}
-			}
-			else
-				cb.setColor(sf::Color(180, 180, 180, 128));
-		}
-		return toRet;
-	}
-
-	bool _tccRound2(HitboxEntity &outEntity, std::vector<CollisionBody> &outVector, CollisionResults &outCurrentResults,
-					bool debugPrint)
-	{
-		bool toRet = false;
-		for (auto &&cb : outVector)
-		{
-			if (cb.getCacheVector() != sf::Vector2f(0, 0) && cb.collidesWith(outEntity.accessCollider()))
-			{
-				cb.setColor(sf::Color(0, 200, 200, 128));
-
-				auto overlapVec = outEntity.accessCollider().getOverlapVector(cb);
-				if (overlapVec == cb.getCacheVector())
-				{
-					auto curVec = outEntity.accessCollider().getEjectionVector(cb, overlapVec);
-
-					if (debugPrint)
-						std::cout << "-2 YES\tcache: " << std::fixed << std::setprecision(4) << cb.getCacheVector().x
-								  << " \t" << cb.getCacheVector().y << " \tejection: " << -curVec.x << " \t"
-								  << -curVec.y << std::endl;
-
-					outEntity.move(curVec);
-
-					checkCollisionResults(curVec, outCurrentResults);
-
-					cb.setCacheVector(sf::Vector2f(0, 0));
-				}
-				else
-				{
-					if (debugPrint)
-						std::cout << "-2 NO\tcache: " << std::fixed << std::setprecision(4) << cb.getCacheVector().x
-								  << " \t" << cb.getCacheVector().y << std::endl;
-					cb.setCacheVector(overlapVec);
-					toRet = true;
-				}
-			}
-		}
-		return toRet;
-	}
-
-	void _tccRound3(HitboxEntity &outEntity, std::vector<CollisionBody> &outVector, bool debugPrint)
-	{
-		for (auto &&cb : outVector)
-		{
-			if (cb.getCacheVector() != sf::Vector2f(0, 0) && cb.collidesWith(outEntity.accessCollider()))
-			{
-				cb.setColor(sf::Color(0, 255, 255, 128));
-
-				auto overlapVec = outEntity.accessCollider().getOverlapVector(cb);
-
-				auto curVec = outEntity.accessCollider().getEjectionVector(cb, overlapVec);
-
-				if (debugPrint)
-					std::cout << "---3!! YES!!\tcache: " << std::fixed << std::setprecision(4) << cb.getCacheVector().x
-							  << " \t" << cb.getCacheVector().y << " \tejection:\t" << -curVec.x << " \t" << -curVec.y
-							  << std::endl;
-
-				outEntity.move(curVec);
-			}
-			else if (debugPrint)
-				std::cout << "---3!! NO\tcache: " << std::fixed << std::setprecision(4) << cb.getCacheVector().x
-						  << " \t" << cb.getCacheVector().y << std::endl;
 		}
 	}
 };

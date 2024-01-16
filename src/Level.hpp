@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <map>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -13,7 +14,7 @@
 class Level
 {
 public:
-	std::map<sf::Vector2f, std::vector<CollisionBody>, Vector2fCompare> Collision;
+	std::map<sf::Vector2f, std::vector<std::shared_ptr<CollisionBody>>, Vector2fCompare> Collision;
 
 	Level(const std::string& levelPath, bool print = false)
 	{
@@ -83,8 +84,8 @@ private:
 						switch (intVector[j])
 						{
 							case 1:
-								Collision[sf::Vector2f(c.x, c.y)].push_back(
-									CollisionBody(sf::Vector2f((c.x + j) * tileWidth, (c.y + i) * tileHeight)));
+								Collision[sf::Vector2f(c.x, c.y)].push_back(std::make_shared<CollisionBody>(
+									CollisionBody(sf::Vector2f((c.x + j) * tileWidth, (c.y + i) * tileHeight))));
 								break;
 
 							default:

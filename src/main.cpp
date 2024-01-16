@@ -82,7 +82,7 @@ int main()
 			auto vector = pair.second;
 			for (auto&& cb : vector)
 			{
-				window.draw(cb.getCollisionBox());
+				window.draw(cb->getCollisionBox());
 			}
 		}
 

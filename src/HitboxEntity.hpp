@@ -14,7 +14,7 @@ struct Hitbox
 class HitboxEntity : public GravityEntity
 {
 public:
-	HitboxEntity(const sf::Vector2f& position, const sf::Vector2f& collisionBodySize = sf::Vector2f(16, 16),
+	HitboxEntity(const sf::Vector2f& position, const sf::Vector2f& collisionBodySize = sf::Vector2f(14, 12),
 				 float gravityConstant = D_GRAV_CONSTANT, float terminalVelocity = D_TERMINAL_VEL)
 		: GravityEntity(position, gravityConstant, terminalVelocity),
 		  collider(position, collisionBodySize, sf::Color(0, 0, 255, 128))

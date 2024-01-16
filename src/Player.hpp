@@ -11,7 +11,7 @@ public:
 	struct Key
 	{
 		sf::Keyboard::Key keyBind;
-		bool pressed      = false;
+		bool isPressed    = false;
 		bool justPressed  = false;
 		bool justReleased = false;
 
@@ -27,17 +27,17 @@ public:
 		{
 			bool now = sf::Keyboard::isKeyPressed(key.keyBind);
 
-			if (now && !key.pressed)
+			if (now && !key.isPressed)
 				key.justPressed = true;
 			else
 				key.justPressed = false;
 
-			if (!now && key.pressed)
+			if (!now && key.isPressed)
 				key.justReleased = true;
 			else
 				key.justReleased = false;
 
-			key.pressed = now;
+			key.isPressed = now;
 		}
 	}
 
@@ -50,17 +50,17 @@ private:
 		{
 			bool now = sf::Keyboard::isKeyPressed(key.keyBind);
 
-			if (now && !key.pressed)
+			if (now && !key.isPressed)
 				key.justPressed = true;
 			else
 				key.justPressed = false;
 
-			if (!now && key.pressed)
+			if (!now && key.isPressed)
 				key.justReleased = true;
 			else
 				key.justReleased = false;
 
-			key.pressed = now;
+			key.isPressed = now;
 		}
 	}
 
@@ -81,8 +81,8 @@ public:
 	{
 		controls.update();
 
-		float horizontalInput = (float)controls.getKey(3).pressed - (float)controls.getKey(2).pressed;
-		const bool running    = controls.getKey(5).pressed;
+		float horizontalInput = (float)controls.getKey(3).isPressed - (float)controls.getKey(2).isPressed;
+		const bool running    = controls.getKey(5).isPressed;
 
 		// running
 		if (running && horizontalInput != 0.f)
@@ -100,6 +100,7 @@ public:
 			else if (moveVector.x < -maxRunSpeed)
 				moveVector.x = -maxRunSpeed;
 		}
+		// walking
 		else
 		{
 			if (std::fabs(moveVector.x) > walkSpeed)
@@ -112,8 +113,7 @@ public:
 		if (!canJumpTimer.tick(delta) && controls.getKey(4).justPressed)
 		{
 			const float secretCrustyCrabFormula =
-				(std::max(std::fabs(moveVector.x), walkSpeed) / maxRunSpeed) * maxJumpSpeed * 0.45f +
-				maxJumpSpeed * 0.55;
+				(std::max(std::fabs(moveVector.x), walkSpeed) / maxRunSpeed) * maxJumpSpeed * 0.5f + maxJumpSpeed * 0.5;
 			moveVector.y = -secretCrustyCrabFormula;
 			canJumpTimer.block();
 			bigJump = true;
@@ -146,9 +146,9 @@ private:
 	const float maxJumpSpeed = 3.2f;
 	bool bigJump             = false;
 
-	const float walkSpeed       = 0.6f;
-	const float maxRunSpeed     = 1.4f;
-	const float acc             = 0.01f;
-	const float deAcc           = 0.08f;
-	const float turnAroundDeAcc = 0.06f;
+	const float walkSpeed       = 0.7f;
+	const float maxRunSpeed     = 1.48f;
+	const float acc             = 0.008f;
+	const float deAcc           = 0.035f;
+	const float turnAroundDeAcc = 0.05f;
 };
