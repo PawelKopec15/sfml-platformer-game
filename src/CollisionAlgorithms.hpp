@@ -49,12 +49,14 @@ public:
 		{
 			for (auto &cb : outCollision[coord])
 			{
-				cb->setColor(sf::Color(180, 180, 180, 128));
 				if (cb->intersects(outEntity.accessCollider()))
 				{
+					cb->setColor(sf::Color(140, 180, 140, 96));
 					cb->setCacheVector(sf::Vector2f(0, 0));
 					collisionBodies.push_back(cb);
 				}
+				else
+					cb->setColor(sf::Color(180, 180, 180, 96));
 			}
 		}
 
@@ -73,7 +75,7 @@ public:
 					if (check > tccTolerance || check < 1.f / tccTolerance || overlapVec == (*it)->getCacheVector() ||
 						i > 1)
 					{
-						(*it)->setColor(sf::Color(0, 200, i * 120, 128));
+						(*it)->setColor(sf::Color(0, 200, i * 120, 96));
 
 						auto curVec = outEntity.accessCollider().getEjectionVector(*(*it), overlapVec);
 						outEntity.move(curVec);

@@ -1,41 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="16" height="12" tilewidth="16" tileheight="16" infinite="1" nextlayerid="2" nextobjectid="1">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="8" height="8" tilewidth="16" tileheight="16" infinite="1" nextlayerid="2" nextobjectid="1">
  <editorsettings>
   <chunksize width="8" height="6"/>
   <export format="tmx"/>
  </editorsettings>
  <tileset firstgid="1" source="../_dev/RandomProject2Tileset.tsx"/>
- <layer id="1" name="Collision" width="16" height="12">
+ <layer id="1" name="Collision" width="8" height="8">
   <data encoding="csv">
    <chunk x="0" y="0" width="8" height="6">
 0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,
+0,0,0,1,1,0,1,1,
 0,0,0,0,0,0,0,0,
-0,0,0,0,1,0,0,1,
-0,0,0,0,1,0,0,1,
-0,0,0,0,1,0,0,1
+0,0,0,0,0,0,0,0,
+0,0,0,1,1,1,1,1
 </chunk>
    <chunk x="8" y="0" width="8" height="6">
 0,0,0,0,0,0,0,0,
-0,0,1,1,1,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,1,0,0,0,1,0,
+0,0,1,0,0,0,1,0,
+0,0,1,1,1,1,1,0,
+0,0,0,0,0,0,0,0
+</chunk>
+   <chunk x="16" y="0" width="8" height="6">
 0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,
+0,0,0,0,0,1,1,1,
 0,0,0,0,0,0,0,0,
-1,1,0,0,1,0,0,0
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0
+</chunk>
+   <chunk x="24" y="0" width="8" height="6">
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+1,1,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,1,1,1,0,0,0
 </chunk>
    <chunk x="0" y="6" width="8" height="6">
-0,0,0,0,1,0,0,0,
-0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,
 1,0,0,0,0,0,0,0,
+1,0,0,0,0,1,1,0,
+1,0,0,0,0,1,1,0,
 1,1,1,1,1,1,1,1
 </chunk>
    <chunk x="8" y="6" width="8" height="6">
-0,0,0,0,1,0,0,0,
-0,0,0,0,1,0,0,0,
-0,1,1,1,1,0,0,0,
 0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,1,1,0,0,0,1,1,
+0,1,1,0,0,0,1,1,
+0,0,0,0,0,0,1,1,
+1,1,1,1,1,1,1,1
+</chunk>
+   <chunk x="16" y="6" width="8" height="6">
+0,0,0,0,0,0,0,0,
+0,0,0,0,1,1,0,0,
+0,0,0,0,1,1,0,0,
+0,0,0,0,1,1,0,0,
+0,0,0,0,1,1,1,0,
+1,1,1,1,1,1,1,1
+</chunk>
+   <chunk x="24" y="6" width="8" height="6">
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,1,1,1,1,1,0,1,
+0,0,0,0,0,0,0,1,
 0,0,0,0,0,0,0,1,
 1,1,1,1,1,1,1,1
 </chunk>

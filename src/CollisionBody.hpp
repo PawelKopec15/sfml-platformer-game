@@ -7,7 +7,7 @@ class CollisionBody
 {
 public:
 	CollisionBody(const sf::Vector2f& position = sf::Vector2f(0, 0), const sf::Vector2f& size = sf::Vector2f(16, 16),
-				  const sf::Color& color = sf::Color(200, 200, 200, 128))
+				  const sf::Color& color = sf::Color(200, 200, 200, 96))
 	{
 		collisionBox.setPosition(position);
 		collisionBox.setSize(size);

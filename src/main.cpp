@@ -1,3 +1,4 @@
+#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <iomanip>
 #include <iostream>
@@ -29,7 +30,6 @@ int main()
 	debug_info_text.setFont(font);
 	debug_info_text.setCharacterSize(8);
 	debug_info_text.setFillColor(sf::Color::White);
-	debug_info_text.setPosition(sf::Vector2f(1, 1));
 
 	// Test entities
 
@@ -50,9 +50,7 @@ int main()
 		for (auto event = sf::Event{}; window.pollEvent(event);)
 		{
 			if (event.type == sf::Event::Closed)
-			{
 				window.close();
-			}
 		}
 
 		auto delta = clock.restart().asMicroseconds();
@@ -66,10 +64,13 @@ int main()
 		// Collision
 		auto colRes = CollisionAlgorithms::Get().StaticTripleCollisionForHitboxEntity(level.Collision, player, {});
 
-		// Debug text
+		// Camera
+		actionView.setCenter(player.getCenter().x, actionView.getSize().y / 2.f);
+		window.setView(actionView);
 
-		debug_info_text.setString("delta: " + std::to_string(delta) + "\nFPS: " + std::to_string(1000000 / delta) +
-								  "\t jump timer: " + std::to_string(player.getCanJump()));
+		// Debug text
+		debug_info_text.setString("delta: " + std::to_string(delta) + "\nFPS: " + std::to_string(1000000 / delta));
+		debug_info_text.setPosition(actionView.getCenter() - (actionView.getSize() / 2.f) + sf::Vector2f(1.f, 1.f));
 
 		// ||--------------------------------------------------------------------------------||
 		// ||                                     Render                                     ||

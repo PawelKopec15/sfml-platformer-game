@@ -2,6 +2,15 @@
 
 #include <SFML/Graphics.hpp>
 
+namespace sf
+{
+Vector2f operator/(const Vector2f& v, float scalar) { return {v.x / scalar, v.y / scalar}; }
+
+Vector2f operator*(const Vector2f& v, float scalar) { return {v.x * scalar, v.y * scalar}; }
+
+Vector2f operator*(float scalar, const Vector2f& v) { return {v.x * scalar, v.y * scalar}; }
+}  // namespace sf
+
 sf::Vector2f normalize(const sf::Vector2f& source)
 {
 	float length = sqrt((source.x * source.x) + (source.y * source.y));

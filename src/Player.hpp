@@ -113,7 +113,8 @@ public:
 		if (!canJumpTimer.tick(delta) && controls.getKey(4).justPressed)
 		{
 			const float secretCrustyCrabFormula =
-				(std::max(std::fabs(moveVector.x), walkSpeed) / maxRunSpeed) * maxJumpSpeed * 0.5f + maxJumpSpeed * 0.5;
+				(std::max(std::fabs(moveVector.x), walkSpeed) / maxRunSpeed) * maxJumpSpeed * 0.4f +
+				maxJumpSpeed * 0.65f;
 			moveVector.y = -secretCrustyCrabFormula;
 			canJumpTimer.block();
 			bigJump = true;
@@ -147,8 +148,8 @@ private:
 	bool bigJump             = false;
 
 	const float walkSpeed       = 0.7f;
-	const float maxRunSpeed     = 1.48f;
-	const float acc             = 0.008f;
+	const float maxRunSpeed     = 1.4f;
+	const float acc             = 0.007f;
 	const float deAcc           = 0.035f;
 	const float turnAroundDeAcc = 0.05f;
 };
