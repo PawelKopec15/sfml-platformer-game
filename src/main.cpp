@@ -35,7 +35,8 @@ int main()
 
 	// Test entities
 
-	Level level("leveldata/testmap1.tmx");
+	Level level;
+	level.create("leveldata/testmap1.tmx", true);
 
 	Controls p1Controls;
 

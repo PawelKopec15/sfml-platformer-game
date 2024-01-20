@@ -73,7 +73,11 @@
 </chunk>
   </data>
  </layer>
- <objectgroup id="2" name="Object Layer 1">
-  <object id="1" template="../assets/leveleditor/CameraZone.tx" type="CameraZone" x="0" y="0" width="512" height="192" rotation="0"/>
+ <objectgroup id="2" name="CameraZones">
+  <object id="1" template="../assets/leveleditor/CameraZone.tx" type="CameraZone" x="0" y="0" width="512" height="192" rotation="0">
+   <properties>
+    <property name="Top" type="int" value="0"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>
