@@ -73,7 +73,7 @@ class Player : public HitboxEntity
 {
 public:
 	Player(const sf::Vector2f& position, Controls controls)
-		: HitboxEntity(position, sf::Vector2f(14, 12)), controls(controls)
+		: HitboxEntity(position, sf::Vector2f(14.f, 12.f), sf::Vector2f(-7.f, -6.f)), controls(controls)
 	{}
 	~Player() override = default;
 
@@ -144,12 +144,12 @@ private:
 
 	Timer canJumpTimer = Timer(0.05f);
 
-	const float maxJumpSpeed = 3.2f;
+	const float maxJumpSpeed = 3.0f;
 	bool bigJump             = false;
 
-	const float walkSpeed       = 0.7f;
-	const float maxRunSpeed     = 1.4f;
-	const float acc             = 0.007f;
+	const float walkSpeed       = 0.6f;
+	const float maxRunSpeed     = 1.2f;
+	const float acc             = 0.006f;
 	const float deAcc           = 0.035f;
 	const float turnAroundDeAcc = 0.05f;
 };

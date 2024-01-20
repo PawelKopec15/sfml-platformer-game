@@ -14,10 +14,12 @@ struct Hitbox
 class HitboxEntity : public GravityEntity
 {
 public:
-	HitboxEntity(const sf::Vector2f& position, const sf::Vector2f& collisionBodySize = sf::Vector2f(14, 12),
-				 float gravityConstant = D_GRAV_CONSTANT, float terminalVelocity = D_TERMINAL_VEL)
+	HitboxEntity(const sf::Vector2f& position, const sf::Vector2f& colliderSize = sf::Vector2f(14, 12),
+				 const sf::Vector2f& colliderOffset = sf::Vector2f(0, 0), float gravityConstant = D_GRAV_CONSTANT,
+				 float terminalVelocity = D_TERMINAL_VEL)
 		: GravityEntity(position, gravityConstant, terminalVelocity),
-		  collider(position, collisionBodySize, sf::Color(0, 0, 255, 128))
+		  collider(position, colliderSize, sf::Color(0, 0, 255, 128)),
+		  colliderOffset(colliderOffset)
 	{}
 	~HitboxEntity() override = default;
 
@@ -26,9 +28,10 @@ public:
 	void setPosition(const sf::Vector2f& position) override
 	{
 		this->GravityEntity::setPosition(position);
-		collider.setPosition(position);
+		collider.setPosition(position + colliderOffset);
 	}
-	void setCollisionBodySize(const sf::Vector2f& size) { collider.setSize(size); }
+	void setColliderSize(const sf::Vector2f& size) { collider.setSize(size); }
+	void setColliderOffset(const sf::Vector2f& val) { colliderOffset = val; }
 
 	void move(const sf::Vector2f& offset) override
 	{
@@ -51,6 +54,7 @@ public:
 
 protected:
 	CollisionBody collider;
+	sf::Vector2f colliderOffset;
 	Hitbox hurtBox;
 	Hitbox attackBox;
 

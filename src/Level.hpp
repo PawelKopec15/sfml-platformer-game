@@ -8,8 +8,8 @@
 #include <vector>
 
 #include "CollisionBody.hpp"
-#include "TMXParser.hpp"
 #include "Vector2fFunctions.hpp"
+#include "XMLParser.hpp"
 
 class Level
 {
@@ -21,9 +21,8 @@ public:
 		if (print)
 			std::cout << "Building level from " << levelPath << " ..." << std::endl;
 
-		TMXParser parser;
 		if (parser.parseFile(levelPath))
-			buildLevel(parser);
+			buildLevel();
 		else
 			parseError = true;
 
@@ -37,60 +36,104 @@ public:
 	~Level() = default;
 
 private:
+	XMLParser parser;
 	bool parseError = false;
 
 	int width;
 	int height;
-	int tileWidth  = 16;
-	int tileHeight = 16;
+	int tileWidth   = 16;
+	int tileHeight  = 16;
+	int chunkWidth  = 16;
+	int chunkHeight = 16;
 
-	void buildLevel(TMXParser& parser)
+	std::vector<int> stringToVector(const std::string& input)
 	{
-		width      = parser.getMap().width;
-		height     = parser.getMap().height;
-		tileWidth  = parser.getMap().tileWidth;
-		tileHeight = parser.getMap().tileHeight;
+		std::vector<int> result;
+		std::stringstream ss(input);
 
-		for (const auto& layer : parser.getMap().layers)
-			handleLayer(layer);
+		int number;
+		char comma;
+
+		while (ss >> number)
+		{
+			result.push_back(number);
+			ss >> comma;  // Consume the comma
+		}
+
+		return result;
 	}
 
-	void handleLayer(const Layer& layer)
+	void buildLevel()
 	{
-		if (layer.name == "Collision")
+		for (const auto& attr : parser.getRoot().attributes)
 		{
-			for (auto&& c : layer.chunks)
+			if (attr.name == "width")
+				width = std::stoi(attr.value);
+			else if (attr.name == "height")
+				height = std::stoi(attr.value);
+			else if (attr.name == "tilewidth")
+				tileWidth = std::stoi(attr.value);
+			else if (attr.name == "tileheight")
+				tileHeight = std::stoi(attr.value);
+		}
+		for (const auto& child : parser.getRoot().children)
+		{
+			if (child.name == "editorsettings")
+				handleEditorSettings(child);
+			if (child.name == "layer")
+				handleLayer(child);
+		}
+	}
+
+	void handleEditorSettings(const XMLElement& editorSettings)
+	{
+		for (const auto& child : editorSettings.children)
+		{
+			if (child.name == "chunksize")
 			{
-				for (size_t i = 0; i < c.height; ++i)
+				for (const auto& attr : child.attributes)
 				{
-					std::istringstream ss(c.data[i]);
+					if (attr.name == "width")
+						chunkWidth = std::stoi(attr.value);
+					else if (attr.name == "height")
+						chunkHeight = std::stoi(attr.value);
+				}
+			}
+		}
+	}
 
-					// Vector to store the integers
-					std::vector<int> intVector;
+	void handleLayer(const XMLElement& layer)
+	{
+		for (const auto& chunk : layer.children[0].children)
+		{
+			int x = 0;
+			int y = 0;
 
-					// Temporary variable to store each integer while parsing
-					std::string token;
+			std::vector<std::vector<int>> vals = {};
+			for (const auto& attr : chunk.attributes)
+			{
+				if (attr.name == "x")
+					x = std::stoi(attr.value);
+				else if (attr.name == "y")
+					y = std::stoi(attr.value);
+				else if (attr.name == "")
+					vals.push_back(stringToVector(attr.value));
+			}
 
-					// Parse the string using getline and ',' as the delimiter
-					while (std::getline(ss, token, ','))
+			// TODO TESTS ONLY
+			for (size_t i = 0; i < vals.size(); ++i)
+			{
+				for (size_t j = 0; j < vals[i].size(); ++j)
+				{
+					switch (vals[i][j])
 					{
-						// Convert the string to an integer and push it into the vector
-						int intValue = std::stoi(token);
-						intVector.push_back(intValue);
-					}
+						case 1:
+							Collision[sf::Vector2f(x, y)].push_back(std::make_shared<CollisionBody>(
+								CollisionBody(sf::Vector2f((x + j) * tileWidth, (y + i) * tileHeight))));
+							break;
 
-					for (size_t j = 0; j < c.width; ++j)
-					{
-						switch (intVector[j])
-						{
-							case 1:
-								Collision[sf::Vector2f(c.x, c.y)].push_back(std::make_shared<CollisionBody>(
-									CollisionBody(sf::Vector2f((c.x + j) * tileWidth, (c.y + i) * tileHeight))));
-								break;
-
-							default:
-								break;
-						}
+						default:
+							break;
 					}
 				}
 			}

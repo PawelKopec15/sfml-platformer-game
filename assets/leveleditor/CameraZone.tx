@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object type="CameraZone" width="256" height="192">
+  <properties>
+   <property name="Bottom" type="int" value="-1"/>
+   <property name="Left" type="int" value="-1"/>
+   <property name="Right" type="int" value="-1"/>
+   <property name="Top" type="int" value="-1"/>
+  </properties>
+ </object>
+</template>

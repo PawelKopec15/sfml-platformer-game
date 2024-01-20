@@ -51,7 +51,7 @@ public:
 			{
 				if (cb->intersects(outEntity.accessCollider()))
 				{
-					cb->setColor(sf::Color(140, 180, 140, 96));
+					cb->setColor(sf::Color(120, 180, 120, 96));
 					cb->setCacheVector(sf::Vector2f(0, 0));
 					collisionBodies.push_back(cb);
 				}

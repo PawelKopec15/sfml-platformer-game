@@ -5,12 +5,14 @@
 #include <valarray>
 #include <vector>
 
+#include "Camera.hpp"
 #include "CollisionAlgorithms.hpp"
 #include "CollisionBody.hpp"
 #include "Level.hpp"
 #include "Player.hpp"
 #include "TMXParser.hpp"
 #include "Vector2fFunctions.hpp"
+#include "XMLParser.hpp"
 
 int main()
 {
@@ -33,12 +35,12 @@ int main()
 
 	// Test entities
 
-	Level level("leveldata/testmap1.tmx", true);
+	Level level("leveldata/testmap1.tmx");
 
 	Controls p1Controls;
 
 	Player player(sf::Vector2f(32, 16), p1Controls);
-	player.accessCollider().setColor(sf::Color(255, 0, 0, 180));
+	player.accessCollider().setColor(sf::Color(255, 100, 100, 120));
 
 	//  ||--------------------------------------------------------------------------------||
 	//  ||                                    Main loop                                   ||
@@ -65,11 +67,12 @@ int main()
 		auto colRes = CollisionAlgorithms::Get().StaticTripleCollisionForHitboxEntity(level.Collision, player, {});
 
 		// Camera
-		actionView.setCenter(player.getCenter().x, actionView.getSize().y / 2.f);
+		actionView.setCenter(player.getPosition().x, actionView.getSize().y / 2.f);
 		window.setView(actionView);
 
 		// Debug text
-		debug_info_text.setString("delta: " + std::to_string(delta) + "\nFPS: " + std::to_string(1000000 / delta));
+		debug_info_text.setString("delta: " + std::to_string(delta) +
+								  "\nFPS: " + (delta > 0 ? std::to_string(1000000 / delta) : 0));
 		debug_info_text.setPosition(actionView.getCenter() - (actionView.getSize() / 2.f) + sf::Vector2f(1.f, 1.f));
 
 		// ||--------------------------------------------------------------------------------||

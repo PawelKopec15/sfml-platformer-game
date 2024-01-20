@@ -9,7 +9,7 @@ class GravityEntity
 public:
 	GravityEntity(const sf::Vector2f& position, float gravityConstant = D_GRAV_CONSTANT,
 				  float terminalVelocity = D_TERMINAL_VEL)
-		: gravityConstant(gravityConstant), terminalVelocity(terminalVelocity)
+		: position(position), gravityConstant(gravityConstant), terminalVelocity(terminalVelocity)
 	{}
 	virtual ~GravityEntity() = default;
 
@@ -26,20 +26,31 @@ public:
 	void setSpriteTextureRect(const sf::IntRect& rect) { sprite.setTextureRect(rect); }
 	void setSpriteOffset(const sf::Vector2f& offset) { spriteOffset = offset; }
 
-	virtual void setPosition(const sf::Vector2f& position) { sprite.setPosition(position + spriteOffset); }
+	virtual void setPosition(const sf::Vector2f& val)
+	{
+		position = val;
+		sprite.setPosition(val + spriteOffset);
+	}
+	const sf::Vector2f& getPosition() { return position; }
 
 	const sf::Vector2f& getMoveVector() { return moveVector; }
 	void setMoveVector(const sf::Vector2f& val) { moveVector = val; }
-	virtual void move(const sf::Vector2f& offset) { sprite.move(offset); }
+
+	virtual void move(const sf::Vector2f& offset)
+	{
+		position += offset;
+		sprite.move(offset);
+	}
 
 	sf::Sprite& accessSprite() { return sprite; }
 
 protected:
-	sf::Sprite sprite;
-	sf::Vector2f spriteOffset = sf::Vector2f(0, 0);
+	sf::Vector2f position;
+	sf::Vector2f moveVector = sf::Vector2f(0, 0);
 
 	float gravityConstant;
 	float terminalVelocity;
 
-	sf::Vector2f moveVector = sf::Vector2f(0, 0);
+	sf::Sprite sprite;
+	sf::Vector2f spriteOffset = sf::Vector2f(0, 0);
 };

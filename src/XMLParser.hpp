@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+#include <cctype>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -8,21 +10,24 @@
 
 struct XMLAttribute
 {
-	std::string name;
-	std::string value;
+	std::string name  = "";
+	std::string value = "";
 };
 
 struct XMLElement
 {
-	std::string name;
-	std::vector<XMLAttribute> attributes;
-	std::vector<XMLElement> children;
+	std::string name = "";
+
+	std::vector<XMLAttribute> attributes = {};
+	std::vector<XMLElement> children     = {};
 };
 
 class XMLParser
 {
 public:
 	XMLParser() = default;
+	explicit XMLParser(const std::string& filename) { parseFile(filename); }
+	~XMLParser() = default;
 
 	bool parseFile(const std::string& filename)
 	{
@@ -36,131 +41,205 @@ public:
 		std::stringstream buffer;
 		buffer << file.rdbuf();
 		file.close();
-
-		return parse(buffer.str());
-	}
-
-	void printXMLTree() const { printXMLElement(rootElement); }
-
-	XMLElement& getRootElement() { return rootElement; }
-
-private:
-	bool parse(const std::string& xmlString)
-	{
-		std::istringstream xmlStream(xmlString);
-
-		std::stack<XMLElement*> elementStack;
-		XMLElement* currentElement = nullptr;
+		std::istringstream xmlStream(buffer.str());
 
 		std::string line;
 		while (std::getline(xmlStream, line))
 		{
-			processLine(line, elementStack, currentElement);
+			if (!process_line(line))
+			{
+				std::cerr << "Error parsing line: \"" << line << "\". Parsing stopped." << std::endl;
+				return false;
+			}
+		}
+
+		if (!stack.empty())
+		{
+			std::cerr << "Error parsing data, stack not empty. Stack size: " << stack.size() << "." << std::endl;
+			return false;
 		}
 
 		return true;
 	}
 
-	void processLine(const std::string& line, std::stack<XMLElement*>& elementStack, XMLElement*& currentElement)
-	{
-		// Parse XML elements and attributes here
-		// This is a basic example and may not handle all cases
+	const XMLElement getRoot() { return root; }
 
-		// Example: Detecting an XML element
-		size_t startTagPos = line.find('<');
-		if (startTagPos != std::string::npos)
-		{
-			size_t endTagPos = line.find('>', startTagPos);
-			if (endTagPos != std::string::npos)
-			{
-				std::string tagContent = line.substr(startTagPos + 1, endTagPos - startTagPos - 1);
-
-				if (tagContent[0] == '/')
-				{
-					// Closing tag
-					elementStack.pop();
-				}
-				else
-				{
-					// Opening tag
-					XMLElement newElement;
-					parseElementTag(tagContent, newElement);
-
-					if (!elementStack.empty())
-						currentElement = &elementStack.top()->children.emplace_back(newElement);
-
-					else
-					{
-						rootElement    = newElement;
-						currentElement = &rootElement;
-					}
-
-					elementStack.push(currentElement);
-
-					// Check for <chunk> element and add "CSV" attribute
-					if (newElement.name == "chunk")
-						currentElement->attributes.push_back({"CSV", ""});
-				}
-			}
-		}
-		else if (currentElement->name == "chunk")
-			for (auto&& at : currentElement->attributes)
-			{
-				if (at.name == "CSV")
-					at.value.append(line);
-			}
-	}
-
-	void parseElementTag(const std::string& tagContent, XMLElement& element)
-	{
-		std::istringstream tagStream(tagContent);
-
-		// Parse element name
-		std::getline(tagStream, element.name, ' ');
-
-		// Parse attributes
-		std::string attribute;
-		while (std::getline(tagStream, attribute, ' '))
-		{
-			if (!attribute.empty())
-			{
-				size_t equalPos = attribute.find('=');
-				if (equalPos != std::string::npos)
-				{
-					XMLAttribute attr;
-					attr.name  = attribute.substr(0, equalPos);
-					attr.value = attribute.substr(equalPos + 2, attribute.length() - equalPos - 3);
-
-					// Rough " char fix
-					if (attr.name.back() == '\"')
-						attr.name.pop_back();
-
-					element.attributes.push_back(attr);
-				}
-			}
-		}
-	}
-
-	void printXMLElement(const XMLElement& element, int depth = 0) const
-	{
-		for (int i = 0; i < depth; ++i)
-			std::cout << "  ";
-
-		std::cout << "Element: " << element.name << std::endl;
-
-		for (const auto& attribute : element.attributes)
-		{
-			for (int i = 0; i < depth + 1; ++i)
-			{
-				std::cout << "  ";
-			}
-			std::cout << "Attribute: " << attribute.name << " = " << attribute.value << std::endl;
-		}
-
-		for (const auto& child : element.children)
-			printXMLElement(child, depth + 1);
-	}
+	void printParsedData() { print(root, ""); }
 
 private:
-	XMLElement rootElement;
+	std::stack<XMLElement> stack;
+
+	XMLElement root;
+
+	XMLAttribute createNewAttribute(const std::string& word)
+	{
+		XMLAttribute toRet;
+
+		char targetChar = '=';
+		auto foundIndex = word.find(targetChar);
+
+		if (foundIndex != std::string::npos)
+		{
+			toRet.name  = word.substr(0, foundIndex);
+			toRet.value = word.substr(foundIndex + 2, word.length() - foundIndex - 3);
+		}
+		else
+			toRet.value = word;
+
+		return toRet;
+	}
+
+	void handlePopping()
+	{
+		auto child = stack.top();
+		stack.pop();
+		if (!stack.empty())
+		{
+			auto parent = stack.top();
+			stack.pop();
+			parent.children.push_back(child);
+			stack.push(parent);
+		}
+		else
+			root = child;
+	}
+
+	bool process_line(const std::string& val)
+	{
+		auto line = val;
+
+		// Remove leading whitespace
+		line.erase(line.begin(),
+				   std::find_if_not(line.begin(), line.end(), [](unsigned char ch) { return std::isspace(ch); }));
+
+		// Remove trailing whitespace
+		line.erase(
+			std::find_if_not(line.rbegin(), line.rend(), [](unsigned char ch) { return std::isspace(ch); }).base(),
+			line.end());
+
+		// Skip xml header
+		if (line.substr(0, 2) == "<?")
+			return true;
+
+		bool openingBracket   = false;
+		bool quotesOnlyOpened = false;
+
+		std::string word = "";
+
+		int firstChar = 0;
+		int i         = -1;
+
+		while (++i != line.length())
+		{
+			switch (line[i])
+			{
+				case '<':
+					if (!openingBracket)
+					{
+						openingBracket = true;
+						firstChar      = i + 1;
+						break;
+					}
+					return false;
+
+				case '\"':
+					quotesOnlyOpened = !quotesOnlyOpened;
+					break;
+
+				case ' ':
+				case '>':
+					if (quotesOnlyOpened)
+						break;
+
+					word      = line.substr(firstChar, i - firstChar);
+					firstChar = i + 1;
+
+					if (word.length() == 1)
+						break;
+
+					{
+						bool shouldPopNext = false;
+						if (i > 0 && line[i - 1] == '/')
+						{
+							word          = word.substr(0, word.length() - 1);
+							shouldPopNext = true;
+						}
+
+						if (openingBracket)
+						{
+							XMLElement newElement;
+							newElement.name = word;
+							openingBracket  = false;
+							stack.push(newElement);
+						}
+						else
+						{
+							auto element = stack.top();
+							stack.pop();
+							element.attributes.push_back(createNewAttribute(word));
+							stack.push(element);
+						}
+
+						if (shouldPopNext)
+						{
+							openingBracket = false;
+							handlePopping();
+						}
+					}
+
+					break;
+
+				case '/':
+					if (!(i > 0 && line[i - 1] == '<') || (i < line.length() - 1 && line[i + 1] == '>'))
+						break;
+
+					openingBracket = false;
+					handlePopping();
+
+					return true;
+
+				default:
+					break;
+			}
+		}
+
+		if (firstChar != i && !stack.empty())
+		{
+			auto element = stack.top();
+			stack.pop();
+			element.attributes.push_back(createNewAttribute(line));
+			stack.push(element);
+		}
+
+		return true;
+	}
+
+	void print(const XMLElement& element, const std::string& prefix)
+	{
+		std::cout << prefix << "-- ELEMENT name = \'" << element.name << "\'--\n"
+				  << prefix << "-- attributes --" << std::endl;
+
+		for (auto& at : element.attributes)
+		{
+			std::cout << prefix << "name = \'" << at.name << "\'";
+			for (int i = at.name.length(); i < 16; i++)
+				std::cout << " ";
+
+			std::cout << "value = \'" << at.value << "\'" << std::endl;
+		}
+
+		std::cout << prefix << "children: ";
+		if (element.children.empty())
+			std::cout << "{}" << std::endl;
+		else
+		{
+			std::cout << "\n" << prefix << "{" << std::endl;
+			for (auto& child : element.children)
+			{
+				print(child, prefix + "    ");
+				std::cout << std::endl;
+			}
+			std::cout << prefix << "}" << std::endl;
+		}
+	}
 };

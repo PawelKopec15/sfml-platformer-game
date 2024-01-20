@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="8" height="8" tilewidth="16" tileheight="16" infinite="1" nextlayerid="2" nextobjectid="1">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="8" height="8" tilewidth="16" tileheight="16" infinite="1" nextlayerid="3" nextobjectid="4">
  <editorsettings>
   <chunksize width="8" height="6"/>
   <export format="tmx"/>
@@ -73,4 +73,7 @@
 </chunk>
   </data>
  </layer>
+ <objectgroup id="2" name="Object Layer 1">
+  <object id="1" template="../assets/leveleditor/CameraZone.tx" type="CameraZone" x="0" y="0" width="512" height="192" rotation="0"/>
+ </objectgroup>
 </map>
