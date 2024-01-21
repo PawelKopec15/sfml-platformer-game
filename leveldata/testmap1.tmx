@@ -1,13 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="8" height="8" tilewidth="16" tileheight="16" infinite="1" nextlayerid="3" nextobjectid="4">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="48" height="18" tilewidth="16" tileheight="16" infinite="1" nextlayerid="3" nextobjectid="6">
  <editorsettings>
   <chunksize width="8" height="6"/>
   <export format="tmx"/>
  </editorsettings>
  <tileset firstgid="1" source="../_dev/RandomProject2Tileset.tsx"/>
- <layer id="1" name="Collision" width="8" height="8">
+ <layer id="1" name="Collision" width="48" height="18">
   <data encoding="csv">
-   <chunk x="0" y="0" width="8" height="6">
+   <chunk x="32" y="0" width="8" height="6">
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,1,1,1,1,1,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0
+</chunk>
+   <chunk x="40" y="0" width="8" height="6">
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,1,1,1,1,
+0,0,0,0,1,1,1,1,
+1,1,1,1,1,1,1,1,
+0,0,0,0,0,0,0,0
+</chunk>
+   <chunk x="0" y="6" width="8" height="6">
 0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,
 0,0,0,1,1,0,1,1,
@@ -15,7 +31,7 @@
 0,0,0,0,0,0,0,0,
 0,0,0,1,1,1,1,1
 </chunk>
-   <chunk x="8" y="0" width="8" height="6">
+   <chunk x="8" y="6" width="8" height="6">
 0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,
 0,0,1,0,0,0,1,0,
@@ -23,7 +39,7 @@
 0,0,1,1,1,1,1,0,
 0,0,0,0,0,0,0,0
 </chunk>
-   <chunk x="16" y="0" width="8" height="6">
+   <chunk x="16" y="6" width="8" height="6">
 0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,
 0,0,0,0,0,1,1,1,
@@ -31,7 +47,7 @@
 0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0
 </chunk>
-   <chunk x="24" y="0" width="8" height="6">
+   <chunk x="24" y="6" width="8" height="6">
 0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,
 1,1,0,0,0,0,0,0,
@@ -39,7 +55,23 @@
 0,0,0,0,0,0,0,0,
 0,0,1,1,1,0,0,0
 </chunk>
-   <chunk x="0" y="6" width="8" height="6">
+   <chunk x="32" y="6" width="8" height="6">
+0,0,0,0,0,0,0,0,
+0,0,1,1,1,1,1,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,1
+</chunk>
+   <chunk x="40" y="6" width="8" height="6">
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,1,1,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+1,1,0,0,0,0,0,0
+</chunk>
+   <chunk x="0" y="12" width="8" height="6">
 0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,
 1,0,0,0,0,0,0,0,
@@ -47,7 +79,7 @@
 1,0,0,0,0,1,1,0,
 1,1,1,1,1,1,1,1
 </chunk>
-   <chunk x="8" y="6" width="8" height="6">
+   <chunk x="8" y="12" width="8" height="6">
 0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,
 0,1,1,0,0,0,1,1,
@@ -55,7 +87,7 @@
 0,0,0,0,0,0,1,1,
 1,1,1,1,1,1,1,1
 </chunk>
-   <chunk x="16" y="6" width="8" height="6">
+   <chunk x="16" y="12" width="8" height="6">
 0,0,0,0,0,0,0,0,
 0,0,0,0,1,1,0,0,
 0,0,0,0,1,1,0,0,
@@ -63,7 +95,7 @@
 0,0,0,0,1,1,1,0,
 1,1,1,1,1,1,1,1
 </chunk>
-   <chunk x="24" y="6" width="8" height="6">
+   <chunk x="24" y="12" width="8" height="6">
 0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,
 0,1,1,1,1,1,0,1,
@@ -71,12 +103,42 @@
 0,0,0,0,0,0,0,1,
 1,1,1,1,1,1,1,1
 </chunk>
+   <chunk x="32" y="12" width="8" height="6">
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+1,0,0,0,0,0,0,0,
+1,1,0,0,0,0,0,0,
+1,1,1,0,0,0,0,0,
+1,1,1,1,1,1,1,1
+</chunk>
+   <chunk x="40" y="12" width="8" height="6">
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,1,1,1,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+1,1,1,1,1,1,1,1
+</chunk>
   </data>
  </layer>
  <objectgroup id="2" name="CameraZones">
-  <object id="1" template="../assets/leveleditor/CameraZone.tx" type="CameraZone" x="0" y="0" width="512" height="192" rotation="0">
+  <object id="1" template="../assets/leveleditor/CameraZone.tx" type="CameraZone" x="0" y="96" width="512" height="192" rotation="0">
    <properties>
+    <property name="Right" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="4" template="../assets/leveleditor/CameraZone.tx" x="512" y="96" width="256" height="192">
+   <properties>
+    <property name="Bottom" type="int" value="-2"/>
+    <property name="Left" type="int" value="0"/>
     <property name="Top" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="5" template="../assets/leveleditor/CameraZone.tx" x="512" y="0" width="256" height="96">
+   <properties>
+    <property name="Bottom" type="int" value="0"/>
+    <property name="Left" type="int" value="-2"/>
+    <property name="Top" type="int" value="-2"/>
    </properties>
   </object>
  </objectgroup>

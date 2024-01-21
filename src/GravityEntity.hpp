@@ -43,6 +43,7 @@ public:
 	}
 
 	sf::Sprite& accessSprite() { return sprite; }
+	
 
 protected:
 	sf::Vector2f position;

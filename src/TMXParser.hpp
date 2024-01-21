@@ -86,7 +86,7 @@ public:
 	bool parse(const std::string& path, bool print = false)
 	{
 		if (print)
-			std::cout << "Building level from " << path << " ..." << std::endl;
+			std::cout << "Building TMX objects from " << path << " ..." << std::endl;
 
 		XMLParser parser;
 
@@ -273,10 +273,11 @@ private:
 			else if (attr.name == "rotation")
 				toRet.rotation = std::stof(attr.value);
 		}
-		for (const auto& property : object.children[0].children)
-		{
-			toRet.properties[getAttributeValue(property, "name")] = parseObjectProperty(property);
-		}
+		if (!object.children.empty())
+			for (const auto& property : object.children[0].children)
+			{
+				toRet.properties[getAttributeValue(property, "name")] = parseObjectProperty(property);
+			}
 
 		return toRet;
 	}
@@ -326,10 +327,12 @@ private:
 				toRet.height = std::stoi(attr.value);
 		}
 
-		for (const auto& chunk : layer.children[0].children)
-		{
-			toRet.chunks[{getIntAttributeValue(chunk, "x"), getIntAttributeValue(chunk, "y")}] = (parseChunk(chunk));
-		}
+		if (!layer.children.empty())
+			for (const auto& chunk : layer.children[0].children)
+			{
+				toRet.chunks[{getIntAttributeValue(chunk, "x"), getIntAttributeValue(chunk, "y")}] =
+					(parseChunk(chunk));
+			}
 
 		return toRet;
 	}

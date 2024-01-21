@@ -19,9 +19,6 @@ int main()
 	auto window = sf::RenderWindow{{1024u, 768u}, "Random Project 2"};
 	window.setFramerateLimit(144);
 
-	sf::View actionView(sf::FloatRect(0.f, 0.f, 256.f, 192.f));
-	window.setView(actionView);
-
 	// Debug text
 
 	sf::Font font;
@@ -37,6 +34,7 @@ int main()
 
 	Level level;
 	level.create("leveldata/testmap1.tmx", true);
+	level.accessCamera().setView(sf::View(sf::FloatRect(0.f, 0.f, 256.f, 192.f)));
 
 	Controls p1Controls;
 
@@ -68,13 +66,15 @@ int main()
 		auto colRes = CollisionAlgorithms::Get().StaticTripleCollisionForHitboxEntity(level.Collision, player, {});
 
 		// Camera
-		actionView.setCenter(player.getPosition().x, actionView.getSize().y / 2.f);
-		window.setView(actionView);
+		level.accessCamera().followEntity(player, player.accessCollider().getCollisionBox().getSize().x / 2.f,
+										  player.accessCollider().getCollisionBox().getSize().y / 2.f);
+		window.setView(level.accessCamera().getView());
 
 		// Debug text
 		debug_info_text.setString("delta: " + std::to_string(delta) +
 								  "\nFPS: " + (delta > 0 ? std::to_string(1000000 / delta) : 0));
-		debug_info_text.setPosition(actionView.getCenter() - (actionView.getSize() / 2.f) + sf::Vector2f(1.f, 1.f));
+		debug_info_text.setPosition(level.accessCamera().getView().getCenter() -
+									(level.accessCamera().getView().getSize() / 2.f) + sf::Vector2f(1.f, 1.f));
 
 		// ||--------------------------------------------------------------------------------||
 		// ||                                     Render                                     ||

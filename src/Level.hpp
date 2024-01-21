@@ -25,11 +25,16 @@ public:
 
 		handleDebugCollision();
 
+		camera.findCameraZones(parser.getMap());
+
 		return parseError;
 	}
 
+	Camera& accessCamera() { return camera; }
+
 private:
 	TMXParser parser;
+	Camera camera;
 
 	void handleDebugCollision()
 	{
