@@ -1,9 +1,0 @@
-This is my copypaste of compile commands in case it gets overridden (curse you cmake)
-
-[
-  {
-    "command": "C:\\MinGW\\bin\\g++.exe C:\\Users\\PK\\Documents\\Projekty\\Cpp\\sfml-platformer-game\\src\\main.cpp",
-    "directory": "C:/Users/PK/Documents/Projekty/Cpp/sfml-platformer-game/build",
-    "file": "C:/Users/PK/Documents/Projekty/Cpp/sfml-platformer-game/src/main.cpp"
-  }
-]
