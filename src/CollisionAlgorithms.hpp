@@ -146,7 +146,7 @@ public:
 private:
 	CollisionAlgorithms() = default;
 
-	const float tccTolerance = 1.8f;
+	const float tccTolerance = 2.2f;
 
 	void checkCollisionResults(const sf::Vector2f &vec, CollisionResults &outCurrentResults)
 	{

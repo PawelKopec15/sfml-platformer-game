@@ -33,12 +33,12 @@ int main()
 	// Test entities
 
 	Level level;
-	level.create("leveldata/testmap1.tmx", true);
+	level.create("leveldata/testmap1.tmx");
 	level.accessCamera().setView(sf::View(sf::FloatRect(0.f, 0.f, 256.f, 192.f)));
 
 	Controls p1Controls;
 
-	Player player(sf::Vector2f(32, 16), p1Controls);
+	Player player(sf::Vector2f(32, 128), p1Controls);
 	player.accessCollider().setColor(sf::Color(255, 100, 100, 120));
 
 	//  ||--------------------------------------------------------------------------------||
