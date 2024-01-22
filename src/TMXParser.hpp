@@ -313,9 +313,10 @@ private:
 		return toRet;
 	}
 
-	TMXLayer parseLayer(const XMLElement& layer) const
+	TMXLayer parseLayer(const XMLElement& layer, const TMXEditorSettings& editorSettings) const
 	{
 		TMXLayer toRet;
+		std::vector<std::vector<int>> looseLevelData = {};
 
 		for (const auto& attr : layer.attributes)
 		{
@@ -327,12 +328,49 @@ private:
 				toRet.height = std::stoi(attr.value);
 		}
 
-		if (!layer.children.empty())
+		if (layer.children.empty())
+			return toRet;
+
+		for (const auto& attr : layer.children[0].attributes)
+		{
+			if (attr.name == "")
+				looseLevelData.push_back(stringToIntVector(attr.value));
+		}
+
+		if (!layer.children[0].children.empty())  // chunks specified in file
+		{
 			for (const auto& chunk : layer.children[0].children)
 			{
 				toRet.chunks[{getIntAttributeValue(chunk, "x"), getIntAttributeValue(chunk, "y")}] =
 					(parseChunk(chunk));
 			}
+		}
+		else if (!looseLevelData.empty())  // chunks not specified in file, will have to create them manually
+		{
+			const auto chunksHorizontal = looseLevelData[0].size() / editorSettings.chunkWidth;
+			const auto chunksVertical   = looseLevelData.size() / editorSettings.chunkHeight;
+
+			for (size_t i = 0; i < chunksHorizontal; ++i)
+			{
+				for (size_t j = 0; j < chunksVertical; ++j)
+				{
+					TMXChunk chunk;
+					chunk.width  = editorSettings.chunkWidth;
+					chunk.height = editorSettings.chunkHeight;
+
+					for (size_t y = 0; y < chunk.height; ++y)
+					{
+						std::vector<int> vec;
+						for (size_t x = 0; x < chunk.width; ++x)
+							vec.push_back(looseLevelData[j * chunk.height + y][i * chunk.width + x]);
+
+						chunk.data.push_back(vec);
+					}
+
+					toRet.chunks[{i * editorSettings.chunkWidth, j * editorSettings.chunkHeight}] = chunk;
+				}
+			}
+		}
 
 		return toRet;
 	}
@@ -386,7 +424,7 @@ private:
 			// TODO TILESET
 
 			else if (child.name == "layer")
-				map.layers[getIntAttributeValue(child, "id")] = parseLayer(child);
+				map.layers[getIntAttributeValue(child, "id")] = parseLayer(child, map.editorSettings);
 			else if (child.name == "objectgroup")
 				map.objectGroups[getIntAttributeValue(child, "id")] = parseObjectGroup(child);
 		}
