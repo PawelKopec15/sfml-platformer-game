@@ -101,15 +101,24 @@ int main()
 		// ||                                     Process                                    ||
 		// ||--------------------------------------------------------------------------------||
 
-		player.process(delta);
+		if (!level.accessCamera().isInTransitionAnimation())
+			player.process(delta);
+
 		player.animate(delta);
 
 		// Collision
 		auto colRes = CollisionAlgorithms::Get().StaticTripleCollisionForHitboxEntity(level.Collision, player, {});
 
 		// Camera
-		level.accessCamera().followEntity(player, player.accessCollider().getCollisionBox().getSize().x / 2.f,
-										  player.accessCollider().getCollisionBox().getSize().y / 2.f);
+		if (level.accessCamera().isInTransitionAnimation())
+		{
+			level.accessCamera().transitionAnimationTick(delta, player);
+		}
+		else
+		{
+			level.accessCamera().followEntity(player, player.accessCollider().getCollisionBox().getSize().x / 2.f,
+											  player.accessCollider().getCollisionBox().getSize().y / 2.f);
+		}
 		window.setView(level.accessCamera().getView());
 
 		// Debug text

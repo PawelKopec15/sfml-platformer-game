@@ -27,6 +27,8 @@ public:
 
 	virtual void animate(sf::Int64 delta) { sprite.tick(delta); }
 
+	virtual void die() { dead = true; }
+
 	void setSpriteTexture(const sf::Texture& texture) { sprite.setTexture(texture); }
 	void setSpriteTextureRect(const sf::IntRect& rect) { sprite.setTextureRect(rect); }
 	void setSpriteOffset(const sf::Vector2f& offset) { sprite.setOffset(offset); }
@@ -53,7 +55,11 @@ public:
 		sprite.move(offset);
 	}
 
+	bool isDead() { return dead; }
+
 protected:
+	bool dead = false;
+
 	sf::Vector2f position;
 	sf::Vector2f moveVector = sf::Vector2f(0, 0);
 

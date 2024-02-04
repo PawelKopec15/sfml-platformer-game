@@ -54,6 +54,9 @@ public:
 	KeyFrameAnimator(signed long long duration = 1000000, bool loop = true) : duration(duration), loop(loop) {}
 	~KeyFrameAnimator() = default;
 
+	void setDuration(signed long long val) { duration = val; }
+	signed long long getDuration() const { return duration; }
+
 	void addKeyFrameTimeline(const T& name, const KeyFrameTimeline& timeline) { timelines[name] = timeline; }
 
 	void addKeyToKeyFrameTimeline(const T& timeLineName, signed long long when,
@@ -71,6 +74,8 @@ public:
 								 std::make_shared<KeyFrame>(KeyFrame(keyFrameTargetValue, keyFrameContinuous)));
 	}
 
+	void clearAllTimelines() { timelines.clear(); }
+
 	std::vector<std::pair<T, float>> reset(bool soft = false)
 	{
 		elapsedTime = soft ? (elapsedTime - duration) : 0;
@@ -81,6 +86,7 @@ public:
 	}
 
 	bool ended() const { return elapsedTime >= duration; }
+	void lock() { elapsedTime = duration; }
 
 	std::vector<std::pair<T, float>> tick(signed long long delta)
 	{

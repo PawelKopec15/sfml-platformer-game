@@ -176,7 +176,7 @@ private:
 
 	int lookDir = 1;
 
-	const float maxJumpSpeed = 3.15f;
+	const float maxJumpSpeed = 3.f;
 	bool bigJump             = false;
 
 	const float walkSpeed       = 0.7f;
