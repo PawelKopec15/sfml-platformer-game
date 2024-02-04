@@ -6,19 +6,19 @@ class Timer
 {
 public:
 	Timer() = default;
-	explicit Timer(signed long long microseconds) : target(microseconds) {}
+	explicit Timer(int microseconds) : target(microseconds) {}
 	explicit Timer(float seconds) : target((int)(seconds * 1000000.f)) {}
 	~Timer() = default;
 
-	void set(signed long long microseconds) { target = microseconds; }
+	void set(int microseconds) { target = microseconds; }
 	void setSeconds(float seconds) { target = (int)(seconds * 1000000.f); }
 	void reset() { elapsedMicroseconds = 0; }
 	void block() { elapsedMicroseconds = target; }
 
 	bool hasTimedOut() const { return elapsedMicroseconds >= target; }
-	signed long long getTimeLeft() const { return target - elapsedMicroseconds; }
+	int getTimeLeft() const { return target - elapsedMicroseconds; }
 
-	bool tickAutoReset(signed long long delta, bool softReset = false)
+	bool tickAutoReset(int delta, bool softReset = false)
 	{
 		elapsedMicroseconds += delta;
 		if (!hasTimedOut())
@@ -31,7 +31,7 @@ public:
 
 		return true;
 	}
-	bool tick(signed long long delta)
+	bool tick(int delta)
 	{
 		if (hasTimedOut())
 			return true;
@@ -40,6 +40,6 @@ public:
 	}
 
 private:
-	signed long long elapsedMicroseconds = 0;
-	signed long long target              = 1000000;
+	int elapsedMicroseconds = 0;
+	int target              = 1000000;
 };

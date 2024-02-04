@@ -20,17 +20,17 @@ public:
 	KeyFrameTimeline()  = default;
 	~KeyFrameTimeline() = default;
 
-	void addKeyFrame(signed long long when, const std::shared_ptr<KeyFrame>& keyFrame) { timeline[when] = keyFrame; }
+	void addKeyFrame(int when, const std::shared_ptr<KeyFrame>& keyFrame) { timeline[when] = keyFrame; }
 
-	void addKeyFrame(signed long long when, float keyFrameTargetValue, bool keyFrameContinuous = false)
+	void addKeyFrame(int when, float keyFrameTargetValue, bool keyFrameContinuous = false)
 	{
 		addKeyFrame(when, std::make_shared<KeyFrame>(KeyFrame(keyFrameTargetValue, keyFrameContinuous)));
 	}
 
-	const std::map<signed long long, std::shared_ptr<KeyFrame>>& getTimeline() const { return timeline; }
+	const std::map<int, std::shared_ptr<KeyFrame>>& getTimeline() const { return timeline; }
 
-	void setLastKeyFrame(signed long long val) { lastKeyFrame = val; }
-	signed long long getLastKeyFrame() const { return lastKeyFrame; }
+	void setLastKeyFrame(int val) { lastKeyFrame = val; }
+	int getLastKeyFrame() const { return lastKeyFrame; }
 	float getLastKeyFrameTargetValue() const
 	{
 		try
@@ -43,31 +43,30 @@ public:
 	}
 
 private:
-	std::map<signed long long, std::shared_ptr<KeyFrame>> timeline;
-	signed long long lastKeyFrame = -1;
+	std::map<int, std::shared_ptr<KeyFrame>> timeline;
+	int lastKeyFrame = -1;
 };
 
 template <typename T>
 class KeyFrameAnimator
 {
 public:
-	KeyFrameAnimator(signed long long duration = 1000000, bool loop = true) : duration(duration), loop(loop) {}
+	KeyFrameAnimator(int duration = 1000000, bool loop = true) : duration(duration), loop(loop) {}
 	~KeyFrameAnimator() = default;
 
-	void setDuration(signed long long val) { duration = val; }
-	signed long long getDuration() const { return duration; }
+	void setDuration(int val) { duration = val; }
+	int getDuration() const { return duration; }
 
 	void addKeyFrameTimeline(const T& name, const KeyFrameTimeline& timeline) { timelines[name] = timeline; }
 
-	void addKeyToKeyFrameTimeline(const T& timeLineName, signed long long when,
-								  const std::shared_ptr<KeyFrame>& keyFrame)
+	void addKeyToKeyFrameTimeline(const T& timeLineName, int when, const std::shared_ptr<KeyFrame>& keyFrame)
 	{
 		if (!timelines.count(timeLineName))
 			addKeyFrameTimeline(timeLineName, KeyFrameTimeline());
 
 		timelines[timeLineName].addKeyFrame(when, keyFrame);
 	}
-	void addKeyToKeyFrameTimeline(const T& timeLineName, signed long long when, float keyFrameTargetValue,
+	void addKeyToKeyFrameTimeline(const T& timeLineName, int when, float keyFrameTargetValue,
 								  bool keyFrameContinuous = false)
 	{
 		addKeyToKeyFrameTimeline(timeLineName, when,
@@ -88,7 +87,7 @@ public:
 	bool ended() const { return elapsedTime >= duration; }
 	void lock() { elapsedTime = duration; }
 
-	std::vector<std::pair<T, float>> tick(signed long long delta)
+	std::vector<std::pair<T, float>> tick(int delta)
 	{
 		std::vector<std::pair<T, float>> toRet;
 
@@ -116,8 +115,8 @@ public:
 private:
 	std::map<T, KeyFrameTimeline, std::less<>> timelines;
 
-	signed long long elapsedTime = 0;
-	signed long long duration;
+	int elapsedTime = 0;
+	int duration;
 	bool loop;
 
 	bool _handle_timeline(std::pair<const T, KeyFrameTimeline>& outTimeline, std::pair<T, float>& outToRet) const

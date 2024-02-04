@@ -67,10 +67,10 @@ public:
 		return animations[name].ended();
 	}
 
-	void tick(signed long long delta)
+	void tick(int delta)
 	{
 		_handle_animation_return_vector(
-			animations[currentAnimation].tick((long long int)((float)delta * animationSpeedMultiplier)));
+			animations[currentAnimation].tick((int)((float)delta * animationSpeedMultiplier)));
 	}
 
 	void setTexture(const sf::Texture& val) { sprite.setTexture(val); }
