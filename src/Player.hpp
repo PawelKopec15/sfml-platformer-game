@@ -73,7 +73,7 @@ class Player : public ColliderEntity
 {
 public:
 	Player(const sf::Vector2f& position, Controls controls)
-		: ColliderEntity(position, sf::Vector2f(14.f, 13.f), sf::Vector2f(-7.f, -6.f)), controls(controls)
+		: ColliderEntity(position, sf::Vector2f(14.f, 13.f), sf::Vector2f(-7.f, -6.5f)), controls(controls)
 	{}
 	~Player() override = default;
 
@@ -84,6 +84,9 @@ public:
 		float horizontalInput = (float)controls.getKey(3).isPressed - (float)controls.getKey(2).isPressed;
 		const bool running    = controls.getKey(5).isPressed;
 
+		lookDir = horizontalInput == 0.f ? lookDir : (int)horizontalInput;
+		sprite.setScale({(float)lookDir, 1});
+
 		// running
 		if (running && horizontalInput != 0.f)
 		{
@@ -93,7 +96,9 @@ public:
 			if ((moveVector.x > 0 && horizontalInput > 0) || (moveVector.x < 0 && horizontalInput < 0))
 				moveVector.x += horizontalInput * acc * DELTA_CORRECTION;
 			else
+			{
 				moveVector.x += horizontalInput * turnAroundDeAcc * DELTA_CORRECTION;
+			}
 
 			if (moveVector.x > maxRunSpeed)
 				moveVector.x = maxRunSpeed;
@@ -127,6 +132,33 @@ public:
 			bigJump = false;
 		}
 
+		// animations
+		float animationDelta = delta;
+
+		if (canJumpTimer.hasTimedOut())
+		{
+			if (moveVector.y <= 0.f)
+				sprite.setAnimation("Jump");
+			else
+				sprite.setAnimation("Fall");
+		}
+		else
+		{
+			if (moveVector.x == 0.f)
+				sprite.setAnimation("Stand");
+			else if (horizontalInput == 0.f || (moveVector.x > 0.f && horizontalInput > 0.f) ||
+					 (moveVector.x < 0.f && horizontalInput < 0.f))
+			{
+				sprite.setAnimation("Run", sprite.getCurrentAnimation() != "Run");
+				animationDelta += delta * 2.f * (std::fabs(moveVector.x) - walkSpeed);
+			}
+
+			else
+				sprite.setAnimation("Turn");
+		}
+
+		sprite.tick(animationDelta);
+
 		this->ColliderEntity::process(delta);
 	}
 
@@ -144,11 +176,13 @@ private:
 
 	Timer canJumpTimer = Timer(0.05f);
 
+	int lookDir = 1;
+
 	const float maxJumpSpeed = 3.0f;
 	bool bigJump             = false;
 
-	const float walkSpeed       = 0.6f;
-	const float maxRunSpeed     = 1.2f;
+	const float walkSpeed       = 0.7f;
+	const float maxRunSpeed     = 1.4f;
 	const float acc             = 0.006f;
 	const float deAcc           = 0.035f;
 	const float turnAroundDeAcc = 0.05f;

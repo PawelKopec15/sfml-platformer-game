@@ -52,6 +52,7 @@ public:
 
 		return false;
 	}
+	const std::string& getCurrentAnimation() { return currentAnimation; }
 
 	void resetCurrentAnimation(bool soft = true)
 	{
@@ -69,6 +70,7 @@ public:
 	void tick(signed long long delta) { _handle_animation_return_vector(animations[currentAnimation].tick(delta)); }
 
 	void setTexture(const sf::Texture& val) { sprite.setTexture(val); }
+	void setTextureRect(const sf::IntRect& val) { sprite.setTextureRect(val); }
 	const sf::Sprite& getSprite() { return sprite; }
 
 	void setPosition(const sf::Vector2f& val) { sprite.setPosition(val + spriteOffset); }
@@ -80,7 +82,11 @@ public:
 	void setScale(const sf::Vector2f& val) { sprite.setScale(val); }
 	void setOrigin(const sf::Vector2f& val) { sprite.setOrigin(val); }
 
-	void setOffset(const sf::Vector2f& val) { spriteOffset = val; }
+	void setOffset(const sf::Vector2f& val)
+	{
+		spriteOffset = val;
+		setPosition(sprite.getPosition());
+	}
 	const sf::Vector2f& getOffset() const { return spriteOffset; }
 
 private:

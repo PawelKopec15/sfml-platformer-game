@@ -26,13 +26,19 @@ public:
 	}
 
 	void setSpriteTexture(const sf::Texture& texture) { sprite.setTexture(texture); }
+	void setSpriteTextureRect(const sf::IntRect& rect) { sprite.setTextureRect(rect); }
 	void setSpriteOffset(const sf::Vector2f& offset) { sprite.setOffset(offset); }
 	const sf::Sprite& getSprite() { return sprite.get(); }
+	void addAnimation(const std::string& name, const KeyFrameAnimator<SpriteKeyType>& animation)
+	{
+		sprite.addAnimation(name, animation);
+	}
+	void setSpriteOrigin(const sf::Vector2f& origin) { sprite.setOrigin(origin); }
 
 	virtual void setPosition(const sf::Vector2f& val)
 	{
 		position = val;
-		sprite.setPosition(val + sprite.getOffset());
+		sprite.setPosition(val);
 	}
 	const sf::Vector2f& getPosition() { return position; }
 
