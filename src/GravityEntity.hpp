@@ -11,7 +11,9 @@ public:
 	GravityEntity(const sf::Vector2f& position, float gravityConstant = D_GRAV_CONSTANT,
 				  float terminalVelocity = D_TERMINAL_VEL)
 		: position(position), gravityConstant(gravityConstant), terminalVelocity(terminalVelocity)
-	{}
+	{
+		sprite.setPosition(position);
+	}
 	virtual ~GravityEntity() = default;
 
 	virtual void process(sf::Int64 delta)
@@ -24,12 +26,13 @@ public:
 	}
 
 	void setSpriteTexture(const sf::Texture& texture) { sprite.setTexture(texture); }
-	void setSpriteOffset(const sf::Vector2f& offset) { spriteOffset = offset; }
+	void setSpriteOffset(const sf::Vector2f& offset) { sprite.setOffset(offset); }
+	const sf::Sprite& getSprite() { return sprite.get(); }
 
 	virtual void setPosition(const sf::Vector2f& val)
 	{
 		position = val;
-		sprite.setPosition(val + spriteOffset);
+		sprite.setPosition(val + sprite.getOffset());
 	}
 	const sf::Vector2f& getPosition() { return position; }
 
@@ -50,5 +53,4 @@ protected:
 	float terminalVelocity;
 
 	AnimatedSprite sprite;
-	sf::Vector2f spriteOffset = sf::Vector2f(0, 0);
 };

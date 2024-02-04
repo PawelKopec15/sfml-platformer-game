@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <map>
 #include <memory>
 #include <string>
@@ -48,15 +47,31 @@ private:
 	signed long long lastKeyFrame = -1;
 };
 
+template <typename T>
 class KeyFrameAnimator
 {
 public:
 	KeyFrameAnimator(signed long long duration = 1000000, bool loop = true) : duration(duration), loop(loop) {}
 	~KeyFrameAnimator() = default;
 
-	void addKeyFrameTimeline(const std::string& name, const KeyFrameTimeline& timeline) { timelines[name] = timeline; }
+	void addKeyFrameTimeline(const T& name, const KeyFrameTimeline& timeline) { timelines[name] = timeline; }
 
-	std::vector<std::pair<std::string, float>> reset(bool soft = false)
+	void addKeyToKeyFrameTimeline(const T& timeLineName, signed long long when,
+								  const std::shared_ptr<KeyFrame>& keyFrame)
+	{
+		if (!timelines.count(timeLineName))
+			addKeyFrameTimeline(timeLineName, KeyFrameTimeline());
+
+		timelines[timeLineName].addKeyFrame(when, keyFrame);
+	}
+	void addKeyToKeyFrameTimeline(const T& timeLineName, signed long long when, float keyFrameTargetValue,
+								  bool keyFrameContinuous = false)
+	{
+		addKeyToKeyFrameTimeline(timeLineName, when,
+								 std::make_shared<KeyFrame>(KeyFrame(keyFrameTargetValue, keyFrameContinuous)));
+	}
+
+	std::vector<std::pair<T, float>> reset(bool soft = false)
 	{
 		elapsedTime = soft ? (elapsedTime - duration) : 0;
 		for (auto&& timeline : timelines)
@@ -67,9 +82,9 @@ public:
 
 	bool ended() const { return elapsedTime >= duration; }
 
-	std::vector<std::pair<std::string, float>> tick(signed long long delta)
+	std::vector<std::pair<T, float>> tick(signed long long delta)
 	{
-		std::vector<std::pair<std::string, float>> toRet;
+		std::vector<std::pair<T, float>> toRet;
 
 		if (ended())
 		{
@@ -83,7 +98,7 @@ public:
 
 		for (auto&& timeline : timelines)
 		{
-			std::pair<std::string, float> p = {"", 0};
+			std::pair<T, float> p = {T(), 0};
 
 			if (_handle_timeline(timeline, p))
 				toRet.push_back(p);
@@ -93,10 +108,13 @@ public:
 	}
 
 private:
-	std::map<std::string, KeyFrameTimeline, std::less<>> timelines;
+	std::map<T, KeyFrameTimeline, std::less<>> timelines;
 
-	bool _handle_timeline(std::pair<const std::string, KeyFrameTimeline>& outTimeline,
-						  std::pair<std::string, float>& outToRet) const
+	signed long long elapsedTime = 0;
+	signed long long duration;
+	bool loop;
+
+	bool _handle_timeline(std::pair<const T, KeyFrameTimeline>& outTimeline, std::pair<T, float>& outToRet) const
 	{
 		bool foundAnything      = false;
 		bool foundPreviousPoint = false;
@@ -136,8 +154,4 @@ private:
 
 		return foundAnything;
 	}
-
-	signed long long elapsedTime = 0;
-	signed long long duration;
-	bool loop;
 };
