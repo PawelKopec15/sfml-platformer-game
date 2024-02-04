@@ -31,15 +31,17 @@ public:
 
 		std::vector<std::shared_ptr<CameraZone>> activeCameraZones;
 
-		if (lastCameraZone != nullptr)  // Special handling for lastCameraZone to avoid duplicates of it.
-										// Always handled first so if entity wasn't supposed to get out of
-										// it he will be forced to stay inside.
+		// Special handling for lastCameraZone to avoid duplicates of it.
+		// Always handled first so if entity wasn't supposed to get out of
+		// it he will be forced to stay inside.
+		if (lastCameraZone != nullptr)
 		{
 			if (restrictView)
 				handleRestrictView(outEntity, *lastCameraZone);
 			if (restrictEntity)
 				handleRestrictEntity(outEntity, *lastCameraZone, stopMarginHor, stopMarginVer);
 		}
+
 		for (const auto& cameraZone : cameraZones)
 		{
 			if (outEntity.getPosition().x > cameraZone.bounds.left &&

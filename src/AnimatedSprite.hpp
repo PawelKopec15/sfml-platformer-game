@@ -67,7 +67,11 @@ public:
 		return animations[name].ended();
 	}
 
-	void tick(signed long long delta) { _handle_animation_return_vector(animations[currentAnimation].tick(delta)); }
+	void tick(signed long long delta)
+	{
+		_handle_animation_return_vector(
+			animations[currentAnimation].tick((long long int)((float)delta * animationSpeedMultiplier)));
+	}
 
 	void setTexture(const sf::Texture& val) { sprite.setTexture(val); }
 	void setTextureRect(const sf::IntRect& val) { sprite.setTextureRect(val); }
@@ -89,12 +93,17 @@ public:
 	}
 	const sf::Vector2f& getOffset() const { return spriteOffset; }
 
+	float getAnimationSpeedMultiplier() const { return animationSpeedMultiplier; }
+	void setAnimationSpeedMultiplier(float val) { animationSpeedMultiplier = val; }
+
 private:
 	sf::Sprite sprite;
 	sf::Vector2f spriteOffset;
 
 	std::map<std::string, KeyFrameAnimator<SpriteKeyType>, std::less<>> animations;
 	std::string currentAnimation = "";
+
+	float animationSpeedMultiplier = 1.f;
 
 	void _handle_animation_return_vector(std::vector<std::pair<SpriteKeyType, float>> vector)
 	{

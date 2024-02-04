@@ -19,8 +19,7 @@ void handleSpriteInitPlayer(Player& outPlayer, sf::Texture& outTex)
 {
 	if (!outTex.loadFromFile("../assets/graphics/player_1.png"))
 	{
-		// TODO sensowny error
-		std::cout << "spriteerror" << std::endl;
+		std::cerr << "Error loading player sprite texture." << std::endl;
 	}
 	outPlayer.setSpriteTexture(outTex);
 	outPlayer.setSpriteTextureRect({0, 0, 16, 32});
@@ -30,10 +29,10 @@ void handleSpriteInitPlayer(Player& outPlayer, sf::Texture& outTex)
 	KeyFrameAnimator<SpriteKeyType> standAnim;
 	standAnim.addKeyToKeyFrameTimeline(SpriteKeyType::RECT_X, 0, 0.f);
 
-	KeyFrameAnimator<SpriteKeyType> runAnim(300000);
+	KeyFrameAnimator<SpriteKeyType> runAnim(270000);
 	runAnim.addKeyToKeyFrameTimeline(SpriteKeyType::RECT_X, 0, 16.f);
-	runAnim.addKeyToKeyFrameTimeline(SpriteKeyType::RECT_X, 100000, 32.f);
-	runAnim.addKeyToKeyFrameTimeline(SpriteKeyType::RECT_X, 200000, 48.f);
+	runAnim.addKeyToKeyFrameTimeline(SpriteKeyType::RECT_X, 90000, 32.f);
+	runAnim.addKeyToKeyFrameTimeline(SpriteKeyType::RECT_X, 180000, 48.f);
 
 	KeyFrameAnimator<SpriteKeyType> jumpAnim;
 	jumpAnim.addKeyToKeyFrameTimeline(SpriteKeyType::RECT_X, 0, 64.f);
@@ -103,6 +102,7 @@ int main()
 		// ||--------------------------------------------------------------------------------||
 
 		player.process(delta);
+		player.animate(delta);
 
 		// Collision
 		auto colRes = CollisionAlgorithms::Get().StaticTripleCollisionForHitboxEntity(level.Collision, player, {});

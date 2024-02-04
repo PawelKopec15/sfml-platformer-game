@@ -25,6 +25,8 @@ public:
 		move(sf::Vector2f(moveVector.x * DELTA_CORRECTION, moveVector.y * DELTA_CORRECTION));
 	}
 
+	virtual void animate(sf::Int64 delta) { sprite.tick(delta); }
+
 	void setSpriteTexture(const sf::Texture& texture) { sprite.setTexture(texture); }
 	void setSpriteTextureRect(const sf::IntRect& rect) { sprite.setTextureRect(rect); }
 	void setSpriteOffset(const sf::Vector2f& offset) { sprite.setOffset(offset); }

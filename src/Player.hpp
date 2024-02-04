@@ -133,8 +133,8 @@ public:
 		}
 
 		// animations
-		float animationDelta = delta;
 
+		sprite.setAnimationSpeedMultiplier(1.f);
 		if (canJumpTimer.hasTimedOut())
 		{
 			if (moveVector.y <= 0.f)
@@ -150,14 +150,12 @@ public:
 					 (moveVector.x < 0.f && horizontalInput < 0.f))
 			{
 				sprite.setAnimation("Run", sprite.getCurrentAnimation() != "Run");
-				animationDelta += delta * 2.f * (std::fabs(moveVector.x) - walkSpeed);
+				sprite.setAnimationSpeedMultiplier(1.f + 2.f * (std::fabs(moveVector.x) - walkSpeed));
 			}
 
 			else
 				sprite.setAnimation("Turn");
 		}
-
-		sprite.tick(animationDelta);
 
 		this->ColliderEntity::process(delta);
 	}
@@ -174,16 +172,16 @@ public:
 private:
 	Controls controls;
 
-	Timer canJumpTimer = Timer(0.05f);
+	Timer canJumpTimer = Timer(0.1f);
 
 	int lookDir = 1;
 
-	const float maxJumpSpeed = 3.0f;
+	const float maxJumpSpeed = 3.15f;
 	bool bigJump             = false;
 
 	const float walkSpeed       = 0.7f;
-	const float maxRunSpeed     = 1.4f;
-	const float acc             = 0.006f;
-	const float deAcc           = 0.035f;
-	const float turnAroundDeAcc = 0.05f;
+	const float maxRunSpeed     = 1.45f;
+	const float acc             = 0.005f;
+	const float deAcc           = 0.015f;
+	const float turnAroundDeAcc = 0.03f;
 };
