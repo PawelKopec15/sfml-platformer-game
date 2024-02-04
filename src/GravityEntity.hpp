@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "AnimatedSprite.hpp"
 #include "GlobalDefines.hpp"
 
 class GravityEntity
@@ -23,7 +24,6 @@ public:
 	}
 
 	void setSpriteTexture(const sf::Texture& texture) { sprite.setTexture(texture); }
-	void setSpriteTextureRect(const sf::IntRect& rect) { sprite.setTextureRect(rect); }
 	void setSpriteOffset(const sf::Vector2f& offset) { spriteOffset = offset; }
 
 	virtual void setPosition(const sf::Vector2f& val)
@@ -42,9 +42,6 @@ public:
 		sprite.move(offset);
 	}
 
-	sf::Sprite& accessSprite() { return sprite; }
-	
-
 protected:
 	sf::Vector2f position;
 	sf::Vector2f moveVector = sf::Vector2f(0, 0);
@@ -52,6 +49,6 @@ protected:
 	float gravityConstant;
 	float terminalVelocity;
 
-	sf::Sprite sprite;
+	AnimatedSprite sprite;
 	sf::Vector2f spriteOffset = sf::Vector2f(0, 0);
 };

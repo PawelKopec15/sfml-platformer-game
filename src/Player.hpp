@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "HitboxEntity.hpp"
+#include "ColliderEntity.hpp"
 #include "Timer.hpp"
 
 class Controls
@@ -69,11 +69,11 @@ private:
 							  Key(sf::Keyboard::Enter), Key(sf::Keyboard::Space)};
 };
 
-class Player : public HitboxEntity
+class Player : public ColliderEntity
 {
 public:
 	Player(const sf::Vector2f& position, Controls controls)
-		: HitboxEntity(position, sf::Vector2f(14.f, 13.f), sf::Vector2f(-7.f, -6.f)), controls(controls)
+		: ColliderEntity(position, sf::Vector2f(14.f, 13.f), sf::Vector2f(-7.f, -6.f)), controls(controls)
 	{}
 	~Player() override = default;
 
@@ -127,7 +127,7 @@ public:
 			bigJump = false;
 		}
 
-		this->HitboxEntity::process(delta);
+		this->ColliderEntity::process(delta);
 	}
 
 	void setCanJump(bool val)

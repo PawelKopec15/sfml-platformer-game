@@ -55,6 +55,8 @@ int main()
 		}
 
 		auto delta = clock.restart().asMicroseconds();
+		if (delta > 100000)
+			continue;
 
 		// ||--------------------------------------------------------------------------------||
 		// ||                                     Process                                    ||

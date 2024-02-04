@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "CollisionBody.hpp"
-#include "HitboxEntity.hpp"
+#include "ColliderEntity.hpp"
 #include "Vector2fFunctions.hpp"
 
 struct CollisionResults
@@ -33,7 +33,7 @@ public:
 
 	CollisionResults StaticTripleCollisionCheck(
 		std::map<sf::Vector2f, std::vector<std::shared_ptr<CollisionBody>>, Vector2fCompare> &outCollision,
-		HitboxEntity &outEntity, const std::vector<sf::Vector2f> chunks, bool debugPrint = false)
+		ColliderEntity &outEntity, const std::vector<sf::Vector2f> chunks, bool debugPrint = false)
 	{
 		auto chunksVector = chunks;
 
@@ -105,7 +105,7 @@ public:
 
 	CollisionResults StaticTripleCollisionForHitboxEntity(
 		std::map<sf::Vector2f, std::vector<std::shared_ptr<CollisionBody>>, Vector2fCompare> &outCollision,
-		HitboxEntity &outEntity, const std::vector<sf::Vector2f> chunks, bool debugPrint = false)
+		ColliderEntity &outEntity, const std::vector<sf::Vector2f> chunks, bool debugPrint = false)
 	{
 		auto colRes =
 			CollisionAlgorithms::Get().StaticTripleCollisionCheck(outCollision, outEntity, chunks, debugPrint);
