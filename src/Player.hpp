@@ -115,17 +115,18 @@ public:
 		}
 
 		// jumping
-		if (!canJumpTimer.tick(delta) && controls.getKey(4).justPressed)
+		coyoteTimer.tick(delta);
+		if (getCanJump() && controls.getKey(4).justPressed)
 		{
 			const float secretCrustyCrabFormula =
 				(std::max(std::fabs(moveVector.x), walkSpeed) / maxRunSpeed) * maxJumpSpeed * 0.4f +
 				maxJumpSpeed * 0.65f;
 			moveVector.y = -secretCrustyCrabFormula;
-			canJumpTimer.block();
+			setCanJump(false);
 			bigJump = true;
 		}
 		if (onFloor)
-			canJumpTimer.reset();
+			setCanJump(true);
 		if (bigJump && moveVector.y < 0 && controls.getKey(4).justReleased)
 		{
 			moveVector.y /= 2.f;
@@ -135,7 +136,7 @@ public:
 		// animations
 
 		sprite.setAnimationSpeedMultiplier(1.f);
-		if (canJumpTimer.hasTimedOut())
+		if (coyoteTimer.hasTimedOut())
 		{
 			if (moveVector.y <= 0.f)
 				sprite.setAnimation("Jump");
@@ -163,16 +164,17 @@ public:
 	void setCanJump(bool val)
 	{
 		if (val)
-			canJumpTimer.reset();
+			coyoteTimer.reset();
 		else
-			canJumpTimer.block();
+			coyoteTimer.block();
 	}
-	sf::Int64 getCanJump() const { return canJumpTimer.getTimeLeft(); }
+	// sf::Int64 getOnGroundTimerTimeLeft() const { return onGroundTimer.getTimeLeft(); }
+	bool getCanJump() const { return !coyoteTimer.hasTimedOut(); }
 
 private:
 	Controls controls;
 
-	Timer canJumpTimer = Timer(0.1f);
+	Timer coyoteTimer = Timer(0.1f);
 
 	int lookDir = 1;
 

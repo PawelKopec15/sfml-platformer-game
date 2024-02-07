@@ -4,8 +4,8 @@
 #include <deque>
 #include <memory>
 
-#include "CollisionBody.hpp"
 #include "ColliderEntity.hpp"
+#include "CollisionBody.hpp"
 #include "Vector2fFunctions.hpp"
 
 struct CollisionResults
@@ -31,18 +31,91 @@ public:
 	CollisionAlgorithms &operator=(CollisionAlgorithms &&) = delete;
 	CollisionAlgorithms &operator=(const CollisionAlgorithms &) = delete;
 
+	CollisionResults StaticVectorDifferenceCollisionCheck(
+		std::map<sf::Vector2f, std::vector<std::shared_ptr<CollisionBody>>, Vector2fCompare> &outCollision,
+		ColliderEntity &outEntity, const std::vector<sf::Vector2f> &chunks, bool debugPrint = false)
+	{
+		auto chunksVector = getChunksVector(outCollision, chunks);
+
+		std::vector<sf::Vector2f> orientedOverlapVectors;
+
+		for (const auto &coord : chunksVector)
+		{
+			for (auto &&cb : outCollision[coord])
+			{
+				if (cb->intersects(outEntity.accessCollider()))
+				{
+					cb->setColor(sf::Color(120, 180, 120, 96));
+					orientedOverlapVectors.push_back(outEntity.accessCollider().getOverlapVectorOriented(*cb));
+				}
+				else
+					cb->setColor(sf::Color(180, 180, 180, 96));
+			}
+		}
+
+		for (auto &first : orientedOverlapVectors)
+		{
+			for (auto &second : orientedOverlapVectors)
+			{
+				if (first == second)
+					continue;
+
+				if (first.x * second.x < 0.f)
+				{
+					first.x  = 0.f;
+					second.x = 0.f;
+				}
+				if (first.y * second.y < 0.f)
+				{
+					first.y  = 0.f;
+					second.y = 0.f;
+				}
+			}
+		}
+
+		sf::Vector2f maxVec(0.f, 0.f);
+
+		for (const auto &vec : orientedOverlapVectors)
+		{
+			maxVec.x = std::fabs(vec.x) > std::fabs(maxVec.x) ? vec.x : maxVec.x;
+			maxVec.y = std::fabs(vec.y) > std::fabs(maxVec.y) ? vec.y : maxVec.y;
+		}
+
+		sf::Vector2f ejectionVector(0.f, 0.f);
+
+		if (orientedOverlapVectors.size() == 1)
+		{
+			if (std::fabs(maxVec.y) <= std::fabs(maxVec.x))
+				ejectionVector.y = maxVec.y;
+			else
+				ejectionVector.x = maxVec.x;
+		}
+		else
+			ejectionVector = maxVec;
+
+		outEntity.move(ejectionVector);
+
+		CollisionResults toRet;
+		checkCollisionResults(ejectionVector, toRet);
+		return toRet;
+	}
+
+	CollisionResults StaticVectorDifferenceCollisionCheckForColliderEntity(
+		std::map<sf::Vector2f, std::vector<std::shared_ptr<CollisionBody>>, Vector2fCompare> &outCollision,
+		ColliderEntity &outEntity, const std::vector<sf::Vector2f> &chunks, bool debugPrint = false)
+	{
+		auto colRes = StaticVectorDifferenceCollisionCheck(outCollision, outEntity, chunks, debugPrint);
+
+		handleCollisionResultsforColliderEntitySoft(outEntity, colRes);
+
+		return colRes;
+	}
+
 	CollisionResults StaticTripleCollisionCheck(
 		std::map<sf::Vector2f, std::vector<std::shared_ptr<CollisionBody>>, Vector2fCompare> &outCollision,
-		ColliderEntity &outEntity, const std::vector<sf::Vector2f> chunks, bool debugPrint = false)
+		ColliderEntity &outEntity, const std::vector<sf::Vector2f> &chunks, bool debugPrint = false)
 	{
-		auto chunksVector = chunks;
-
-		// If no chunk coordinates are specified, everything goes
-		if (chunks.empty())
-		{
-			for (const auto &pair : outCollision)
-				chunksVector.push_back(pair.first);
-		}
+		auto chunksVector = getChunksVector(outCollision, chunks);
 
 		std::deque<std::shared_ptr<CollisionBody>> collisionBodies;
 		for (const auto &coord : chunksVector)
@@ -103,13 +176,66 @@ public:
 		return toRet;
 	}
 
-	CollisionResults StaticTripleCollisionForHitboxEntity(
+	CollisionResults StaticTripleCollisionForColliderEntity(
 		std::map<sf::Vector2f, std::vector<std::shared_ptr<CollisionBody>>, Vector2fCompare> &outCollision,
-		ColliderEntity &outEntity, const std::vector<sf::Vector2f> chunks, bool debugPrint = false)
+		ColliderEntity &outEntity, const std::vector<sf::Vector2f> &chunks, bool debugPrint = false)
 	{
 		auto colRes =
 			CollisionAlgorithms::Get().StaticTripleCollisionCheck(outCollision, outEntity, chunks, debugPrint);
 
+		handleCollisionResultsforColliderEntitySoft(outEntity, colRes);
+
+		return colRes;
+	}
+
+private:
+	CollisionAlgorithms() = default;
+
+	const float tccTolerance = 2.2f;
+
+	std::vector<sf::Vector2f> getChunksVector(
+		std::map<sf::Vector2f, std::vector<std::shared_ptr<CollisionBody>>, Vector2fCompare> &outCollision,
+		const std::vector<sf::Vector2f> &chunks)
+	{
+		auto chunksVector = chunks;
+
+		// If no chunk coordinates are specified, everything goes
+		if (chunks.empty())
+		{
+			for (const auto &pair : outCollision)
+				chunksVector.push_back(pair.first);
+		}
+
+		return chunksVector;
+	}
+
+	void handleCollisionResultsforColliderEntity(ColliderEntity &outEntity, const CollisionResults &colRes)
+	{
+		if (colRes.shouldResetHor)
+		{
+			outEntity.setMoveVector(sf::Vector2f(0, outEntity.getMoveVector().y));
+			outEntity.setOnWall(true);
+		}
+		else
+			outEntity.setOnWall(false);
+
+		if (colRes.shouldResetVer)
+		{
+			outEntity.setMoveVector(sf::Vector2f(outEntity.getMoveVector().x, 0));
+			if (colRes.ejectedUp)
+				outEntity.setOnFloor(true);
+			if (colRes.ejectedDown)
+				outEntity.setOnCeil(true);
+		}
+		else
+		{
+			outEntity.setOnFloor(false);
+			outEntity.setOnCeil(false);
+		}
+	}
+
+	void handleCollisionResultsforColliderEntitySoft(ColliderEntity &outEntity, const CollisionResults &colRes)
+	{
 		if (colRes.shouldResetHor && outEntity.getNextFrameResetHor())
 		{
 			outEntity.setMoveVector(sf::Vector2f(0, outEntity.getMoveVector().y));
@@ -139,14 +265,7 @@ public:
 			outEntity.setOnFloor(false);
 			outEntity.setOnCeil(false);
 		}
-
-		return colRes;
 	}
-
-private:
-	CollisionAlgorithms() = default;
-
-	const float tccTolerance = 2.2f;
 
 	void checkCollisionResults(const sf::Vector2f &vec, CollisionResults &outCurrentResults)
 	{

@@ -17,6 +17,7 @@ public:
 
 	bool hasTimedOut() const { return elapsedMicroseconds >= target; }
 	int getTimeLeft() const { return target - elapsedMicroseconds; }
+	int getTargetTime() const { return target; }
 
 	bool tickAutoReset(int delta, bool softReset = false)
 	{

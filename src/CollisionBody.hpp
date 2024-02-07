@@ -50,7 +50,19 @@ public:
 		float amount_v = std::min(selfBounds.top + selfBounds.height, otherBounds.top + otherBounds.height) -
 						 std::max(selfBounds.top, otherBounds.top);
 
-		return sf::Vector2f(amount_h, amount_v);
+		return {amount_h, amount_v};
+	}
+
+	sf::Vector2f getOverlapVectorOriented(CollisionBody& other)
+	{
+		auto overlapVector = getOverlapVector(other);
+
+		if (getCenter().x < other.getCenter().x)
+			overlapVector.x *= -1.f;
+		if (getCenter().y < other.getCenter().y)
+			overlapVector.y *= -1.f;
+
+		return overlapVector;
 	}
 
 	sf::Vector2f getEjectionVector(CollisionBody& other, const sf::Vector2f& overlapVector = sf::Vector2f(0, 0))

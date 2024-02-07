@@ -104,7 +104,7 @@ int main()
 		player.animate(delta);
 
 		// Collision
-		auto colRes = CollisionAlgorithms::Get().StaticTripleCollisionForHitboxEntity(level.Collision, player, {});
+		CollisionAlgorithms::Get().StaticVectorDifferenceCollisionCheckForColliderEntity(level.Collision, player, {});
 
 		// Camera
 		if (level.accessCamera().isInTransitionAnimation())
