@@ -4,28 +4,19 @@
 #define D_GRAV_CONSTANT 0.055f
 #define D_TERMINAL_VEL 2.4f
 
-// class GlobalVariables
+// class Singleton
 // {
 // public:
-// 	static GlobalVariables &Get()
+// 	static Singleton &Get()
 // 	{
-// 		static GlobalVariables INSTANCE;
+// 		static Singleton INSTANCE;
 // 		return INSTANCE;
 // 	}
-// 	GlobalVariables(GlobalVariables &&)      = delete;
-// 	GlobalVariables(const GlobalVariables &) = delete;
-// 	GlobalVariables &operator=(GlobalVariables &&) = delete;
-// 	GlobalVariables &operator=(const GlobalVariables &) = delete;
-
-// 	float getGravityConstant() const { return gravityConstant; }
-// 	void setGravityConstant(float val) { gravityConstant = val; }
-
-//     float getTerminalVelocity() const { return gravityConstant; }
-// 	void setTerminalVelocity(float val) { gravityConstant = val; }
+// 	Singleton(Singleton &&)      = delete;
+// 	Singleton(const Singleton &) = delete;
+// 	Singleton &operator=(Singleton &&) = delete;
+// 	Singleton &operator=(const Singleton &) = delete;
 
 // private:
-// 	GlobalVariables() = default;
-
-// 	float gravityConstant  = 0.000005;
-// 	float terminalVelocity = 0.0003;
+// 	Singleton() = default;
 // };

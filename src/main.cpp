@@ -2,10 +2,12 @@
 #include <SFML/Graphics.hpp>
 #include <iomanip>
 #include <iostream>
+#include <locale>
 #include <memory>
 #include <valarray>
 #include <vector>
 
+#include "BitmapFont.hpp"
 #include "Camera.hpp"
 #include "CollisionAlgorithms.hpp"
 #include "CollisionBody.hpp"
@@ -13,7 +15,6 @@
 #include "Player.hpp"
 #include "TMXParser.hpp"
 #include "Vector2fFunctions.hpp"
-#include "XMLParser.hpp"
 
 void handleSpriteInitPlayer(Player& outPlayer, sf::Texture& outTex)
 {
@@ -52,19 +53,15 @@ void handleSpriteInitPlayer(Player& outPlayer, sf::Texture& outTex)
 
 int main()
 {
-	auto window = sf::RenderWindow{{1024u, 768u}, "Random Project 2"};
+	auto window = sf::RenderWindow{{1024u, 768u}, "Random Project 2", sf::Style::Default};
 	window.setFramerateLimit(144);
 
-	// Debug text
+	// Set the locale to support Unicode
+	std::wcout.imbue(std::locale(""));
 
-	sf::Font font;
-	if (!font.loadFromFile("assets\\font\\PrStart.ttf"))
-		return 0;
-
-	sf::Text debug_info_text;
-	debug_info_text.setFont(font);
-	debug_info_text.setCharacterSize(8);
-	debug_info_text.setFillColor(sf::Color::White);
+	BitmapFont fontKubasta;
+	if (!fontKubasta.create("../assets/font/kubasta_regular_8.PNG", "../assets/font/kubasta_regular_8.fnt"))
+		std::cerr << "Error loading kubasta regular 8 font as BitmapFont" << std::endl;
 
 	// Test entities
 
@@ -122,10 +119,12 @@ int main()
 		window.setView(level.accessCamera().getView());
 
 		// Debug text
-		debug_info_text.setString("delta: " + std::to_string(delta) +
-								  "\nFPS: " + (delta > 0 ? std::to_string(1000000 / delta) : 0));
-		debug_info_text.setPosition(level.accessCamera().getView().getCenter() -
-									(level.accessCamera().getView().getSize() / 2.f) + sf::Vector2f(1.f, 1.f));
+		std::wstring debugTextString =
+			L"delta: " + std::to_wstring(delta) + L"\nFPS: " + std::to_wstring(delta > 0 ? 1000000 / delta : 0);
+
+		sf::Vector2f debugTextPos =
+			sf::Vector2f(level.accessCamera().getView().getCenter() - (level.accessCamera().getView().getSize() / 2.f) +
+						 sf::Vector2f(2.f, -4.f));
 
 		// ||--------------------------------------------------------------------------------||
 		// ||                                     Render                                     ||
@@ -146,7 +145,8 @@ int main()
 
 		window.draw(player.accessCollider().getCollisionBox());
 
-		window.draw(debug_info_text);
+		// window.draw(debug_info_text);
+		window.draw(fontKubasta.getTextDrawable(debugTextString, debugTextPos), &fontKubasta.getFontTexture());
 
 		window.display();
 	}
