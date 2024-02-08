@@ -73,7 +73,7 @@ class Player : public ColliderEntity
 {
 public:
 	Player(const sf::Vector2f& position, Controls controls)
-		: ColliderEntity(position, sf::Vector2f(14.f, 13.f), sf::Vector2f(-7.f, -6.5f)), controls(controls)
+		: ColliderEntity(position, sf::Vector2f(14.f, 14.f), sf::Vector2f(-7.f, -7.f)), controls(controls)
 	{}
 	~Player() override = default;
 
@@ -150,8 +150,13 @@ public:
 			else if (horizontalInput == 0.f || (moveVector.x > 0.f && horizontalInput > 0.f) ||
 					 (moveVector.x < 0.f && horizontalInput < 0.f))
 			{
-				sprite.setAnimation("Run", sprite.getCurrentAnimation() != "Run");
-				sprite.setAnimationSpeedMultiplier(1.f + 2.f * (std::fabs(moveVector.x) - walkSpeed));
+				if (onWall)
+					sprite.setAnimation("Push", sprite.getCurrentAnimation() != "Push");
+				else
+				{
+					sprite.setAnimation("Run", sprite.getCurrentAnimation() != "Run");
+					sprite.setAnimationSpeedMultiplier(1.f + 2.f * (std::fabs(moveVector.x) - walkSpeed));
+				}
 			}
 
 			else
@@ -174,7 +179,7 @@ public:
 private:
 	Controls controls;
 
-	Timer coyoteTimer = Timer(0.1f);
+	Timer coyoteTimer = Timer(0.05f);
 
 	int lookDir = 1;
 

@@ -236,9 +236,11 @@ private:
 
 	void handleCollisionResultsforColliderEntitySoft(ColliderEntity &outEntity, const CollisionResults &colRes)
 	{
+		const float resetAmount = 0.05f;
+
 		if (colRes.shouldResetHor && outEntity.getNextFrameResetHor())
 		{
-			outEntity.setMoveVector(sf::Vector2f(0, outEntity.getMoveVector().y));
+			outEntity.setMoveVector({outEntity.getMoveVector().x * resetAmount, outEntity.getMoveVector().y});
 			outEntity.setOnWall(true);
 		}
 		else if (colRes.shouldResetHor)
@@ -251,7 +253,7 @@ private:
 
 		if (colRes.shouldResetVer && outEntity.getNextFrameResetVer())
 		{
-			outEntity.setMoveVector(sf::Vector2f(outEntity.getMoveVector().x, 0));
+			outEntity.setMoveVector({outEntity.getMoveVector().x, outEntity.getMoveVector().y * resetAmount});
 			if (colRes.ejectedUp)
 				outEntity.setOnFloor(true);
 			if (colRes.ejectedDown)
@@ -269,18 +271,20 @@ private:
 
 	void checkCollisionResults(const sf::Vector2f &vec, CollisionResults &outCurrentResults)
 	{
-		if (std::fabs(vec.x) > 0.1)
+		const float threshold = 0.0001f;
+
+		if (std::fabs(vec.x) > threshold)
 		{
 			outCurrentResults.shouldResetHor = true;
-			if (vec.x > 0)
+			if (vec.x > 0.f)
 				outCurrentResults.ejectedRight = true;
 			else
 				outCurrentResults.ejectedLeft = true;
 		}
-		if (std::fabs(vec.y) > 0.1)
+		if (std::fabs(vec.y) > threshold)
 		{
 			outCurrentResults.shouldResetVer = true;
-			if (vec.y > 0)
+			if (vec.y > 0.f)
 				outCurrentResults.ejectedDown = true;
 			else
 				outCurrentResults.ejectedUp = true;

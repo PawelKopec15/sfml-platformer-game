@@ -44,11 +44,16 @@ void handleSpriteInitPlayer(Player& outPlayer, sf::Texture& outTex)
 	KeyFrameAnimator<SpriteKeyType> turnAnim;
 	turnAnim.addKeyToKeyFrameTimeline(SpriteKeyType::RECT_X, 0, 96.f);
 
+	KeyFrameAnimator<SpriteKeyType> pushAnim(800000);
+	pushAnim.addKeyToKeyFrameTimeline(SpriteKeyType::RECT_X, 0, 112.f);
+	pushAnim.addKeyToKeyFrameTimeline(SpriteKeyType::RECT_X, 400000, 128.f);
+
 	outPlayer.addAnimation("Stand", standAnim);
 	outPlayer.addAnimation("Run", runAnim);
 	outPlayer.addAnimation("Jump", jumpAnim);
 	outPlayer.addAnimation("Fall", fallAnim);
 	outPlayer.addAnimation("Turn", turnAnim);
+	outPlayer.addAnimation("Push", pushAnim);
 }
 
 int main()
