@@ -12,6 +12,7 @@
 #include "CollisionAlgorithms.hpp"
 #include "CollisionBody.hpp"
 #include "Level.hpp"
+#include "NineSlice.hpp"
 #include "Player.hpp"
 #include "TMXParser.hpp"
 #include "Vector2fFunctions.hpp"
@@ -82,6 +83,11 @@ int main()
 	sf::Texture playerTexture;
 	handleSpriteInitPlayer(player, playerTexture);
 
+	NineSlice ns;
+	if (!ns.setTexture("../assets/graphics/ui/nineslicetest.png"))
+		std::cout << "Texture load error" << std::endl;
+	ns.setSlicesAuto({0, 0, 48, 48});
+
 	//  ||--------------------------------------------------------------------------------||
 	//  ||                                    Main loop                                   ||
 	//  ||--------------------------------------------------------------------------------||
@@ -134,7 +140,33 @@ int main()
 		player.animate(delta);
 
 		// Collision
-		CollisionAlgorithms::Get().StaticVectorDifferenceCollisionCheckForColliderEntity(level.Collision, player, {});
+		{
+			auto beforeMoveVec = player.getMoveVector();
+			auto resVec = CollisionAlgorithms::Get().StaticVectorDifferenceCollisionCheck(level.Collision, player, {});
+
+			player.move(resVec);
+
+			player.resetOnEverything();
+
+			if (resVec.x * beforeMoveVec.x < 0.f)
+			{
+				player.setMoveVector({0.f, player.getMoveVector().y});
+
+				if (resVec.x > 0.f)
+					player.setOnLeftWall(true);
+				else
+					player.setOnRightWall(true);
+			}
+			if (resVec.y * beforeMoveVec.y < 0.f)
+			{
+				player.setMoveVector({player.getMoveVector().x, 0.f});
+
+				if (resVec.y < 0.f)
+					player.setOnFloor(true);
+				else
+					player.setOnCeil(true);
+			}
+		}
 
 		// Camera
 		if (level.accessCamera().isInTransitionAnimation())
@@ -175,8 +207,10 @@ int main()
 
 		window.draw(player.accessCollider().getCollisionBox());
 
-		// window.draw(debug_info_text);
 		window.draw(fontKubasta.getTextDrawable(debugTextString, debugTextPos), &fontKubasta.getFontTexture());
+
+		window.draw(ns.getDrawable(0, 120, 53, 53, true), &ns.getTexture());
+		window.draw(ns.getDrawable(100, 120, 53, 53, false), &ns.getTexture());
 
 		window.display();
 	}

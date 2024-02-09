@@ -150,7 +150,7 @@ public:
 			else if (horizontalInput == 0.f || (moveVector.x > 0.f && horizontalInput > 0.f) ||
 					 (moveVector.x < 0.f && horizontalInput < 0.f))
 			{
-				if (onWall)
+				if (onRightWall || onLeftWall)
 					sprite.setAnimation("Push", sprite.getCurrentAnimation() != "Push");
 				else
 				{
@@ -179,7 +179,7 @@ public:
 private:
 	Controls controls;
 
-	Timer coyoteTimer = Timer(0.05f);
+	Timer coyoteTimer = Timer(0.5f);
 
 	int lookDir = 1;
 

@@ -36,23 +36,25 @@ public:
 
 	CollisionBody& accessCollider() { return collider; }
 
-	void setNextFrameResetHor(bool val) { nextFrameResetHor = val; }
-	void setNextFrameResetVer(bool val) { nextFrameResetVer = val; }
-	bool getNextFrameResetHor() const { return nextFrameResetHor; }
-	bool getNextFrameResetVer() const { return nextFrameResetVer; }
-
 	void setOnFloor(bool val) { onFloor = val; }
 	void setOnCeil(bool val) { onCeil = val; }
-	void setOnWall(bool val) { onWall = val; }
+	void setOnLeftWall(bool val) { onLeftWall = val; }
+	void setOnRightWall(bool val) { onRightWall = val; }
+
+	void resetOnEverything()
+	{
+		setOnFloor(false);
+		setOnCeil(false);
+		setOnLeftWall(false);
+		setOnRightWall(false);
+	}
 
 protected:
 	CollisionBody collider;
 	sf::Vector2f colliderOffset;
 
-	bool nextFrameResetHor = false;
-	bool nextFrameResetVer = false;
-
-	bool onFloor = false;
-	bool onCeil  = false;
-	bool onWall  = false;
+	bool onFloor     = false;
+	bool onCeil      = false;
+	bool onLeftWall  = false;
+	bool onRightWall = false;
 };
