@@ -93,6 +93,31 @@ int main()
 		{
 			if (event.type == sf::Event::Closed)
 				window.close();
+
+			if (event.type == sf::Event::KeyPressed)
+			{
+				switch (event.key.scancode)
+				{
+					case sf::Keyboard::Scan::Numpad9:
+						window.setFramerateLimit(0);
+						break;
+
+					case sf::Keyboard::Scan::Numpad8:
+						window.setFramerateLimit(60);
+						break;
+
+					case sf::Keyboard::Scan::Numpad7:
+						window.setFramerateLimit(30);
+						break;
+
+					case sf::Keyboard::Scan::Numpad5:
+						window.setFramerateLimit(144);
+						break;
+
+					default:
+						break;
+				}
+			}
 		}
 
 		auto delta = clock.restart().asMicroseconds();

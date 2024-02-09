@@ -66,7 +66,8 @@ public:
 			textDrawable.append(sf::Vertex(sf::Vector2f(displayPointLeft, displayPointTop + rect.height), color,
 										   sf::Vector2f(rect.left, rect.top + rect.height)));
 
-			accumulatedXOffset += monospaced == 0 ? data.xAdvance + additionalSpacing.x : monospaced;
+			accumulatedXOffset +=
+				monospaced == 0 ? data.xAdvance + additionalSpacing.x : monospaced * (monospaced / data.xAdvance);
 		}
 
 		return textDrawable;
