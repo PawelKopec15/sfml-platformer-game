@@ -179,7 +179,7 @@ public:
 private:
 	Controls controls;
 
-	Timer coyoteTimer = Timer(0.5f);
+	Timer coyoteTimer = Timer(0.05f);
 
 	int lookDir = 1;
 

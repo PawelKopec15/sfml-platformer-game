@@ -84,9 +84,9 @@ int main()
 	handleSpriteInitPlayer(player, playerTexture);
 
 	NineSlice ns;
-	if (!ns.setTexture("../assets/graphics/ui/nineslicetest.png"))
+	if (!ns.setTexture("../assets/graphics/ui/nineslice2.png"))
 		std::cout << "Texture load error" << std::endl;
-	ns.setSlicesAuto({0, 0, 48, 48});
+	ns.setSlicing({0, 0, 16, 16}, {7, 7, 2, 2});
 
 	//  ||--------------------------------------------------------------------------------||
 	//  ||                                    Main loop                                   ||
@@ -209,8 +209,8 @@ int main()
 
 		window.draw(fontKubasta.getTextDrawable(debugTextString, debugTextPos), &fontKubasta.getFontTexture());
 
-		window.draw(ns.getDrawable(0, 120, 53, 53, true), &ns.getTexture());
-		window.draw(ns.getDrawable(100, 120, 53, 53, false), &ns.getTexture());
+		window.draw(ns.getDrawable(20, 120, 60, 60, true), &ns.getTexture());
+		window.draw(ns.getDrawable(100, 120, 60, 60, false), &ns.getTexture());
 
 		window.display();
 	}
