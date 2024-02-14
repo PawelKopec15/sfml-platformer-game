@@ -83,11 +83,6 @@ int main()
 	sf::Texture playerTexture;
 	handleSpriteInitPlayer(player, playerTexture);
 
-	NineSlice ns;
-	if (!ns.setTexture("../assets/graphics/ui/nineslice2.png"))
-		std::cout << "Texture load error" << std::endl;
-	ns.setSlicing({0, 0, 16, 16}, {7, 7, 2, 2});
-
 	//  ||--------------------------------------------------------------------------------||
 	//  ||                                    Main loop                                   ||
 	//  ||--------------------------------------------------------------------------------||
@@ -208,9 +203,6 @@ int main()
 		window.draw(player.accessCollider().getCollisionBox());
 
 		window.draw(fontKubasta.getTextDrawable(debugTextString, debugTextPos), &fontKubasta.getFontTexture());
-
-		window.draw(ns.getDrawable(20, 120, 60, 60, true), &ns.getTexture());
-		window.draw(ns.getDrawable(100, 120, 60, 60, false), &ns.getTexture());
 
 		window.display();
 	}
