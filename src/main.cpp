@@ -11,6 +11,7 @@
 #include "Camera.hpp"
 #include "CollisionAlgorithms.hpp"
 #include "CollisionBody.hpp"
+#include "GuiElement.hpp"
 #include "Level.hpp"
 #include "NineSlice.hpp"
 #include "Player.hpp"
@@ -82,6 +83,20 @@ int main()
 
 	sf::Texture playerTexture;
 	handleSpriteInitPlayer(player, playerTexture);
+
+	NineSlice gui3;
+	gui3.setTexture("../assets/graphics/ui/nineslice3.png");
+	gui3.setSlicing({0, 0, 16, 16}, {5, 5, 6, 6});
+	NineSlice button1;
+	button1.setTexture("../assets/graphics/ui/button1.png");
+	button1.setSlicing({0, 0, 16, 16}, {5, 5, 6, 6});
+
+
+	GuiElement mainGuiElement({10, 128, 100, 100}, std::make_shared<NineSlice>(gui3));
+	mainGuiElement.setLayoutManager(std::make_shared<VBoxLayoutManager>());
+
+	GuiElement part1({0, 128, 80, 20}, std::make_shared<NineSlice>(button1));
+	mainGuiElement.addChild(std::make_shared<GuiElement>(part1));
 
 	//  ||--------------------------------------------------------------------------------||
 	//  ||                                    Main loop                                   ||
@@ -203,6 +218,8 @@ int main()
 		window.draw(player.accessCollider().getCollisionBox());
 
 		window.draw(fontKubasta.getTextDrawable(debugTextString, debugTextPos), &fontKubasta.getFontTexture());
+
+		mainGuiElement.render(window);
 
 		window.display();
 	}
