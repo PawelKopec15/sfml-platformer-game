@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 
+#include "GuiUtilities.hpp"
 #include "LayoutManagers.hpp"
 #include "NineSlice.hpp"
 
@@ -19,8 +20,8 @@ public:
 	void setRect(const sf::FloatRect& val) { rect = val; }
 	void setNineSlice(const std::shared_ptr<NineSlice>& val) { nineSlice = val; }
 
-	void setInnerMarginsTDLR(const std::array<float, 4>& val) { marginsInnerTDLR = val; }
-	void setOuterMarginsTDLR(const std::array<float, 4>& val) { marginsOuterTDLR = val; }
+	void setInnerMargins(const GuiMargins& val) { innerMargins = val; }
+	void setOuterMargins(const GuiMargins& val) { outerMargins = val; }
 
 	void setLayoutManager(const std::shared_ptr<LayoutManager>& val) { layoutManager = val; }
 	void setChildren(const std::vector<std::shared_ptr<GuiElement>>& val) { children = val; }
@@ -32,12 +33,10 @@ public:
 	{
 		sf::FloatRect toRet;
 
-		toRet.top = rect.top + marginsInnerTDLR[0] + marginsOuterTDLR[0];
-		toRet.height =
-			rect.height - marginsInnerTDLR[0] - marginsInnerTDLR[1] - marginsOuterTDLR[0] - marginsOuterTDLR[1];
-		toRet.left = rect.left + marginsInnerTDLR[2] + marginsOuterTDLR[2];
-		toRet.width =
-			rect.width - marginsInnerTDLR[2] - marginsInnerTDLR[3] - marginsOuterTDLR[2] - marginsOuterTDLR[3];
+		toRet.top    = rect.top + innerMargins.top + outerMargins.top;
+		toRet.height = rect.height - innerMargins.top - innerMargins.bottom - outerMargins.top - outerMargins.bottom;
+		toRet.left   = rect.left + innerMargins.left + outerMargins.left;
+		toRet.width  = rect.width - innerMargins.left - innerMargins.right - outerMargins.left - outerMargins.right;
 
 		return toRet;
 	}
@@ -52,7 +51,7 @@ public:
 			sizes.push_back(child->rect.getSize());
 
 		auto availableSpace = getAvailableSpaceForChildren();
-		auto rects = layoutManager->doYourThing(availableSpace, sizes);
+		auto rects          = layoutManager->doYourThing(availableSpace, sizes);
 
 		if (rects.size() != sizes.size())
 			return false;
@@ -89,12 +88,12 @@ public:
 
 protected:
 	sf::FloatRect rect;
-	std::shared_ptr<NineSlice> nineSlice  = nullptr;
-	std::array<float, 4> marginsInnerTDLR = {6, 6, 6, 6};
-	std::array<float, 4> marginsOuterTDLR = {0, 0, 0, 0};
+	std::shared_ptr<NineSlice> nineSlice = nullptr;
+	GuiMargins innerMargins              = {6, 6, 6, 6};
+	GuiMargins outerMargins              = {0, 0, 0, 0};
 
 	std::shared_ptr<LayoutManager> layoutManager      = nullptr;
 	std::vector<std::shared_ptr<GuiElement>> children = {};
 
-	virtual void _handleMouseEvent(sf::Event::EventType type, const sf::Vector2f& mousePosition) {};
+	virtual void _handleMouseEvent(sf::Event::EventType type, const sf::Vector2f& mousePosition){};
 };

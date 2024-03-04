@@ -31,13 +31,17 @@ public:
 		return true;
 	}
 
-	sf::VertexArray getTextDrawable(const std::wstring& str, float x, float y,
-									const sf::Color& color = sf::Color::White, int monospaced = 0)
+	std::pair<sf::VertexArray, sf::FloatRect> getTextDrawable(const std::wstring& str, float x, float y,
+															  const sf::Color& color = sf::Color::White,
+															  int monospaced         = 0)
 	{
 		sf::VertexArray textDrawable(sf::Quads);
 
 		int line                 = 0;
 		float accumulatedXOffset = x;
+
+		float maxAccumulatedXOffset = 0;
+		float totalHeight = 0;
 
 		for (auto ch : str)
 		{
@@ -70,11 +74,14 @@ public:
 
 			accumulatedXOffset +=
 				monospaced == 0 ? data.xAdvance + additionalSpacing.x : monospaced * (monospaced / data.xAdvance);
+			
+			maxAccumulatedXOffset = std::max(maxAccumulatedXOffset, accumulatedXOffset);
+			totalHeight = std::max(totalHeight, displayPointTop + rect.height);
 		}
 
-		return textDrawable;
+		return {textDrawable, {x, y, maxAccumulatedXOffset-x, totalHeight-y}};
 	}
-	sf::VertexArray getTextDrawable(const std::wstring& str, const sf::Vector2f& pos,
+	std::pair<sf::VertexArray, sf::FloatRect> getTextDrawable(const std::wstring& str, const sf::Vector2f& pos,
 									const sf::Color& color = sf::Color::White, int monospaced = 0)
 	{
 		return getTextDrawable(str, pos.x, pos.y, color, monospaced);

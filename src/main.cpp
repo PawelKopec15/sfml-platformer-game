@@ -217,7 +217,7 @@ int main()
 
 		window.draw(player.accessCollider().getCollisionBox());
 
-		window.draw(fontKubasta.getTextDrawable(debugTextString, debugTextPos), &fontKubasta.getFontTexture());
+		window.draw(fontKubasta.getTextDrawable(debugTextString, debugTextPos).first, &fontKubasta.getFontTexture());
 
 		mainGuiElement.render(window);
 
