@@ -91,7 +91,6 @@ int main()
 	button1.setTexture("../assets/graphics/ui/button1.png");
 	button1.setSlicing({0, 0, 16, 16}, {5, 5, 6, 6});
 
-
 	GuiElement mainGuiElement({10, 128, 100, 100}, std::make_shared<NineSlice>(gui3));
 	mainGuiElement.setLayoutManager(std::make_shared<VBoxLayoutManager>());
 

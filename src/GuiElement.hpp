@@ -17,62 +17,48 @@ public:
 	{}
 	~GuiElement() = default;
 
+	void setParent(const std::shared_ptr<GuiElement>& val) { parent = val; }
+
 	void setRect(const sf::FloatRect& val) { rect = val; }
 	void setNineSlice(const std::shared_ptr<NineSlice>& val) { nineSlice = val; }
 
 	void setInnerMargins(const GuiMargins& val) { innerMargins = val; }
-	void setOuterMargins(const GuiMargins& val) { outerMargins = val; }
+	void setOuterMargins(const GuiMargins& val) { outerPadding = val; }
 
 	void setLayoutManager(const std::shared_ptr<LayoutManager>& val) { layoutManager = val; }
-	void setChildren(const std::vector<std::shared_ptr<GuiElement>>& val) { children = val; }
-	void addChild(const std::shared_ptr<GuiElement>& val) { children.push_back(val); }
+	void addChildren(const std::vector<std::shared_ptr<GuiElement>>& val)
+	{
+		for (auto&& child : val)
+		{
+			child->setParent(std::shared_ptr<GuiElement>(this));
+			children.push_back(child);
+		}
+	}
+	void addChild(const std::shared_ptr<GuiElement>& val)
+	{
+		val->setParent(std::shared_ptr<GuiElement>(this));
+		children.push_back(val);
+	}
 
 	const sf::FloatRect& getRect() { return rect; }
 
-	sf::FloatRect getAvailableSpaceForChildren()
-	{
-		sf::FloatRect toRet;
-
-		toRet.top    = rect.top + innerMargins.top + outerMargins.top;
-		toRet.height = rect.height - innerMargins.top - innerMargins.bottom - outerMargins.top - outerMargins.bottom;
-		toRet.left   = rect.left + innerMargins.left + outerMargins.left;
-		toRet.width  = rect.width - innerMargins.left - innerMargins.right - outerMargins.left - outerMargins.right;
-
-		return toRet;
-	}
-
-	bool layOutChildren()
-	{
-		if (!layoutManager)
-			return false;
-
-		std::vector<sf::Vector2f> sizes;
-		for (const auto& child : children)
-			sizes.push_back(child->rect.getSize());
-
-		auto availableSpace = getAvailableSpaceForChildren();
-		auto rects          = layoutManager->doYourThing(availableSpace, sizes);
-
-		if (rects.size() != sizes.size())
-			return false;
-
-		for (size_t i = 0; i < children.size(); ++i)
-			children[i]->setRect(rects[i]);
-
-		return true;
-	}
-
 	void render(sf::RenderWindow& window)
 	{
+		if (!_layOutChildren() && parent)
+		{
+			parent->childHasBeenResized(window);
+			return;
+		}
+
 		if (nineSlice)
 			window.draw(nineSlice->getDrawable(rect.getPosition(), {(int)rect.width, (int)rect.height}, false),
 						&nineSlice->getTexture());
 
-		layOutChildren();
-
 		for (auto&& child : children)
 			child->render(window);
 	}
+
+	void childHasBeenResized(sf::RenderWindow& window) { render(window); }
 
 	void mouseEvent(sf::Event::EventType type, const sf::Vector2f& mousePosition)
 	{
@@ -90,10 +76,59 @@ protected:
 	sf::FloatRect rect;
 	std::shared_ptr<NineSlice> nineSlice = nullptr;
 	GuiMargins innerMargins              = {6, 6, 6, 6};
-	GuiMargins outerMargins              = {0, 0, 0, 0};
+	GuiMargins outerPadding              = {0, 0, 0, 0};
 
-	std::shared_ptr<LayoutManager> layoutManager      = nullptr;
+	std::shared_ptr<GuiElement> parent                = nullptr;
 	std::vector<std::shared_ptr<GuiElement>> children = {};
+	std::shared_ptr<LayoutManager> layoutManager      = nullptr;
 
-	virtual void _handleMouseEvent(sf::Event::EventType type, const sf::Vector2f& mousePosition){};
+
+	sf::FloatRect _getAvailableSpaceForChildren()
+	{
+		sf::FloatRect toRet;
+
+		toRet.top    = rect.top + innerMargins.top + outerPadding.top;
+		toRet.height = rect.height - innerMargins.top - innerMargins.bottom - outerPadding.top - outerPadding.bottom;
+		toRet.left   = rect.left + innerMargins.left + outerPadding.left;
+		toRet.width  = rect.width - innerMargins.left - innerMargins.right - outerPadding.left - outerPadding.right;
+
+		return toRet;
+	}
+
+	// Returns false if this needs to be resized.
+	bool _layOutChildren()
+	{
+		if (!layoutManager)
+			return true;
+
+		std::vector<sf::Vector2f> sizes;
+		for (const auto& child : children)
+			sizes.push_back(child->rect.getSize());
+
+		auto availableSpace               = _getAvailableSpaceForChildren();
+		const auto previousAvailableSpace = availableSpace;
+		auto rects                        = layoutManager->doYourThing(availableSpace, sizes);
+
+		if (availableSpace != previousAvailableSpace)
+		{
+			rect.top = availableSpace.top - innerMargins.top - outerPadding.top;
+			rect.height =
+				availableSpace.height + innerMargins.top + innerMargins.bottom + outerPadding.top + outerPadding.bottom;
+			rect.left = availableSpace.left - innerMargins.left - outerPadding.left;
+			rect.width - availableSpace.width + innerMargins.left + innerMargins.right + innerMargins.left +
+				innerMargins.right;
+			return false;
+		}
+
+		if (rects.size() != sizes.size())
+			return true;
+
+		for (size_t i = 0; i < children.size(); ++i)
+			children[i]->setRect(rects[i]);
+
+		return true;
+	}
+
+	virtual void _handleMouseEvent(sf::Event::EventType type,
+								   const sf::Vector2f& mousePosition){/* Do nothing by default */};
 };
