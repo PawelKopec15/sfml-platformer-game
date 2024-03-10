@@ -227,7 +227,7 @@ int main()
 		window.draw(fontKubasta.getTextDrawable(debugTextString, debugTextPos).first, &fontKubasta.getFontTexture());
 
 		mainGuiElement.render(window);
-
+		
 		window.display();
 	}
 }

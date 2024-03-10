@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -70,10 +71,29 @@ public:
 		_handleMouseEvent(type, mousePosition);
 	}
 
+	void print(const std::string& prefix = "")
+	{
+		_printSelfName(prefix);
+		std::cout << prefix << "---------------------------" << std::endl;
+		_printSelfInfo(prefix);
+
+		if (children.empty())
+			std::cout << prefix << "{ }" << std::endl;
+		else
+		{
+			std::cout << prefix << "{" << std::endl;
+			for (const auto& child : children)
+			{
+				child->print(prefix + "  ");
+			}
+			std::cout << prefix << "}" << std::endl;
+		}
+	}
+
 protected:
 	sf::FloatRect rect;
 	std::shared_ptr<NineSlice> nineSlice = nullptr;
-	GuiMargins innerMargins              = {6, 6, 6, 6};
+	GuiMargins innerMargins              = {0, 0, 0, 0};
 	GuiMargins outerPadding              = {0, 0, 0, 0};
 
 	std::shared_ptr<GuiElement> parent                = nullptr;
@@ -137,4 +157,18 @@ protected:
 
 	virtual void _handleMouseEvent(sf::Event::EventType type,
 								   const sf::Vector2f& mousePosition){/* Do nothing by default */};
+
+	virtual void _printSelfName(const std::string& prefix) const { std::cout << prefix << "GuiElement" << std::endl; }
+	virtual void _printSelfInfo(const std::string& prefix) const
+	{
+		std::cout << prefix << "RECT: left:" << rect.left << " top:" << rect.top << " width:" << rect.width
+				  << " height:" << rect.height << std::endl;
+		std::cout << prefix << "NINESLICE PTR? " << (nineSlice == nullptr ? "NO" : "YES") << std::endl;
+		std::cout << prefix << "INNER MARGINS: top:" << innerMargins.top << " bottom:" << innerMargins.bottom
+				  << " left:" << innerMargins.left << " right:" << innerMargins.right << std::endl;
+		std::cout << prefix << "OUTER PADDING: top:" << outerPadding.top << " bottom:" << outerPadding.bottom
+				  << " left:" << outerPadding.left << " right:" << outerPadding.right << std::endl;
+		std::cout << prefix << "LAYOUT MANAGER PTR? " << (layoutManager == nullptr ? "NO" : "YES") << std::endl;
+		std::cout << prefix << "PARENT PTR? " << (parent == nullptr ? "NO" : "YES") << std::endl;
+	}
 };
