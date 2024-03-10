@@ -50,9 +50,7 @@ public:
 			return;
 		}
 
-		if (nineSlice)
-			window.draw(nineSlice->getDrawable(rect.getPosition(), {(int)rect.width, (int)rect.height}, false),
-						&nineSlice->getTexture());
+		_renderSelf(window);
 
 		for (auto&& child : children)
 			child->render(window);
@@ -81,7 +79,6 @@ protected:
 	std::shared_ptr<GuiElement> parent                = nullptr;
 	std::vector<std::shared_ptr<GuiElement>> children = {};
 	std::shared_ptr<LayoutManager> layoutManager      = nullptr;
-
 
 	sf::FloatRect _getAvailableSpaceForChildren()
 	{
@@ -127,6 +124,15 @@ protected:
 			children[i]->setRect(rects[i]);
 
 		return true;
+	}
+
+	virtual void _renderSelf(sf::RenderWindow& window)
+	{
+		if (nineSlice)
+		{
+			window.draw(nineSlice->getDrawable(rect.getPosition(), {(int)rect.width, (int)rect.height}, false),
+						&nineSlice->getTexture());
+		}
 	}
 
 	virtual void _handleMouseEvent(sf::Event::EventType type,

@@ -12,6 +12,7 @@
 #include "CollisionAlgorithms.hpp"
 #include "CollisionBody.hpp"
 #include "GuiElement.hpp"
+#include "GuiLabel.hpp"
 #include "Level.hpp"
 #include "NineSlice.hpp"
 #include "Player.hpp"
@@ -84,6 +85,8 @@ int main()
 	sf::Texture playerTexture;
 	handleSpriteInitPlayer(player, playerTexture);
 
+	// Test gui
+
 	NineSlice gui3;
 	gui3.setTexture("../assets/graphics/ui/nineslice3.png");
 	gui3.setSlicing({0, 0, 16, 16}, {5, 5, 6, 6});
@@ -94,7 +97,12 @@ int main()
 	GuiElement mainGuiElement({10, 128, 100, 100}, std::make_shared<NineSlice>(gui3));
 	mainGuiElement.setLayoutManager(std::make_shared<VBoxLayoutManager>());
 
-	GuiElement part1({0, 128, 80, 20}, std::make_shared<NineSlice>(button1));
+	GuiElement part1({0, 128, 80, 0}, std::make_shared<NineSlice>(button1));
+	part1.setLayoutManager(std::make_shared<VBoxLayoutManager>());
+
+	GuiLabel labelTest({0, 0, 0, 0}, std::make_shared<BitmapFont>(fontKubasta), L"Hello", sf::Color::Black);
+
+	part1.addChild(std::make_shared<GuiLabel>(labelTest));
 	mainGuiElement.addChild(std::make_shared<GuiElement>(part1));
 
 	//  ||--------------------------------------------------------------------------------||
