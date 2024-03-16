@@ -71,6 +71,9 @@ public:
 		_handleMouseEvent(type, mousePosition);
 	}
 
+	// void setInFocus(bool val) { inFocus = val; }
+	// bool isInFocus() { return inFocus; }
+
 	void print(const std::string& prefix = "")
 	{
 		_printSelfName(prefix);
@@ -99,6 +102,8 @@ protected:
 	std::shared_ptr<GuiElement> parent                = nullptr;
 	std::vector<std::shared_ptr<GuiElement>> children = {};
 	std::shared_ptr<LayoutManager> layoutManager      = nullptr;
+
+	// bool inFocus = false;
 
 	sf::FloatRect _getAvailableSpaceForChildren()
 	{
@@ -170,5 +175,6 @@ protected:
 				  << " left:" << outerPadding.left << " right:" << outerPadding.right << std::endl;
 		std::cout << prefix << "LAYOUT MANAGER PTR? " << (layoutManager == nullptr ? "NO" : "YES") << std::endl;
 		std::cout << prefix << "PARENT PTR? " << (parent == nullptr ? "NO" : "YES") << std::endl;
+		// std::cout << prefix << "IS IN FOCUS? " << (inFocus ? "YES" : "NO") << std::endl;
 	}
 };
