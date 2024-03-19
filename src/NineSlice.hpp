@@ -1,11 +1,26 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <array>
 #include <iostream>
 
 class NineSlice
 {
+public:
+	struct RenderProperties
+	{
+		bool tiled;
+		std::array<bool, 9> dontRenderPart;
+		sf::Color color;
+
+		RenderProperties(bool tiled                                = true,
+						 const std::array<bool, 9>& dontRenderPart = {false, false, false, false, false, false, false,
+																	  false, false},
+						 const sf::Color& color                    = sf::Color::White)
+			: tiled(tiled), dontRenderPart(dontRenderPart), color(color){};
+		explicit RenderProperties(const std::array<bool, 9>& dontRenderPart) : dontRenderPart(dontRenderPart){};
+		explicit RenderProperties(const sf::Color& color) : color(color){};
+	};
+
 public:
 	NineSlice()  = default;
 	~NineSlice() = default;
@@ -32,8 +47,8 @@ public:
 
 	void setTextureRectOnly(const sf::IntRect& fullRect) { textureRect = fullRect; }
 
-	sf::VertexArray getDrawable(float x, float y, int width, int height, bool tiled = true,
-								const sf::Color& color = sf::Color::White)
+	sf::VertexArray getDrawable(float x, float y, int width, int height,
+								const RenderProperties& properties = RenderProperties())
 	{
 		sf::VertexArray drawable(sf::Quads);
 
@@ -58,21 +73,24 @@ public:
 		// Top
 		if (texTopHeight > 0)
 		{
-			if (texLeftWidth > 0)
+			if (texLeftWidth > 0 && !properties.dontRenderPart[0])
+
 				// Top left corner
 				addQuad(drawable, sf::Vector2f(xPositions[0], y), sf::Vector2f(texLeftWidth, texTopHeight),
-						sf::Vector2f(xTexPositions[0], 0), sf::Vector2f(texLeftWidth, texTopHeight), color);
+						sf::Vector2f(xTexPositions[0], 0), sf::Vector2f(texLeftWidth, texTopHeight), properties.color);
 
-			if (centerSpaceWidth > 0)
+			if (centerSpaceWidth > 0 && !properties.dontRenderPart[1])
+
 				// Top side
 				addSomethingBigger(drawable, sf::Vector2f(xPositions[1], y),
 								   sf::Vector2f(centerSpaceWidth, texTopHeight), sf::Vector2f(xTexPositions[1], 0),
-								   sf::Vector2f(centerSlice.width, texTopHeight), color, tiled);
+								   sf::Vector2f(centerSlice.width, texTopHeight), properties.color, properties.tiled);
 
-			if (texRightWidth > 0)
+			if (texRightWidth > 0 && !properties.dontRenderPart[2])
+
 				// Top right corner
 				addQuad(drawable, sf::Vector2f(xPositions[2], y), sf::Vector2f(texRightWidth, texTopHeight),
-						sf::Vector2f(xTexPositions[2], 0), sf::Vector2f(texRightWidth, texTopHeight), color);
+						sf::Vector2f(xTexPositions[2], 0), sf::Vector2f(texRightWidth, texTopHeight), properties.color);
 		}
 
 		// Center
@@ -80,24 +98,30 @@ public:
 		{
 			const float hereY    = y + texTopHeight;
 			const float hereTexY = centerSlice.top;
-			if (texLeftWidth > 0)
+
+			if (texLeftWidth > 0 && !properties.dontRenderPart[3])
+
 				// Left side
-				addSomethingBigger(drawable, sf::Vector2f(xPositions[0], hereY),
-								   sf::Vector2f(texLeftWidth, centerSpaceHeight),
-								   sf::Vector2f(xTexPositions[0], hereTexY),
-								   sf::Vector2f(centerSlice.left, centerSlice.height), color, tiled);
-			if (centerSpaceWidth > 0)
+				addSomethingBigger(
+					drawable, sf::Vector2f(xPositions[0], hereY), sf::Vector2f(texLeftWidth, centerSpaceHeight),
+					sf::Vector2f(xTexPositions[0], hereTexY), sf::Vector2f(centerSlice.left, centerSlice.height),
+					properties.color, properties.tiled);
+
+			if (centerSpaceWidth > 0 && !properties.dontRenderPart[4])
+
 				// Center
-				addSomethingBigger(drawable, sf::Vector2f(xPositions[1], hereY),
-								   sf::Vector2f(centerSpaceWidth, centerSpaceHeight),
-								   sf::Vector2f(xTexPositions[1], hereTexY),
-								   sf::Vector2f(centerSlice.width, centerSlice.height), color, tiled);
-			if (texRightWidth > 0)
+				addSomethingBigger(
+					drawable, sf::Vector2f(xPositions[1], hereY), sf::Vector2f(centerSpaceWidth, centerSpaceHeight),
+					sf::Vector2f(xTexPositions[1], hereTexY), sf::Vector2f(centerSlice.width, centerSlice.height),
+					properties.color, properties.tiled);
+
+			if (texRightWidth > 0 && !properties.dontRenderPart[5])
+
 				// Right side
 				addSomethingBigger(drawable, sf::Vector2f(xPositions[2], hereY),
 								   sf::Vector2f(texRightWidth, centerSpaceHeight),
 								   sf::Vector2f(xTexPositions[2], hereTexY),
-								   sf::Vector2f(texRightWidth, centerSlice.height), color, tiled);
+								   sf::Vector2f(texRightWidth, centerSlice.height), properties.color, properties.tiled);
 		}
 
 		// Bottom
@@ -106,31 +130,36 @@ public:
 			const float hereY    = y + texTopHeight + centerSpaceHeight;
 			const float hereTexY = centerSlice.top + centerSlice.height;
 
-			if (texLeftWidth > 0)
+			if (texLeftWidth > 0 && !properties.dontRenderPart[6])
+
 				// Bottom left corner
 				addQuad(drawable, sf::Vector2f(xPositions[0], hereY), sf::Vector2f(texLeftWidth, texBottomHeight),
-						sf::Vector2f(xTexPositions[0], hereTexY), sf::Vector2f(texLeftWidth, texBottomHeight), color);
+						sf::Vector2f(xTexPositions[0], hereTexY), sf::Vector2f(texLeftWidth, texBottomHeight),
+						properties.color);
 
-			if (centerSpaceWidth > 0)
+			if (centerSpaceWidth > 0 && !properties.dontRenderPart[7])
+
 				// Bottom side
-				addSomethingBigger(drawable, sf::Vector2f(xPositions[1], hereY),
-								   sf::Vector2f(centerSpaceWidth, texBottomHeight),
-								   sf::Vector2f(xTexPositions[1], hereTexY),
-								   sf::Vector2f(centerSlice.width, texBottomHeight), color, tiled);
+				addSomethingBigger(
+					drawable, sf::Vector2f(xPositions[1], hereY), sf::Vector2f(centerSpaceWidth, texBottomHeight),
+					sf::Vector2f(xTexPositions[1], hereTexY), sf::Vector2f(centerSlice.width, texBottomHeight),
+					properties.color, properties.tiled);
 
-			if (texRightWidth > 0)
+			if (texRightWidth > 0 && !properties.dontRenderPart[8])
+
 				// Bottom right corner
 				addQuad(drawable, sf::Vector2f(xPositions[2], hereY), sf::Vector2f(texRightWidth, texBottomHeight),
-						sf::Vector2f(xTexPositions[2], hereTexY), sf::Vector2f(texRightWidth, texBottomHeight), color);
+						sf::Vector2f(xTexPositions[2], hereTexY), sf::Vector2f(texRightWidth, texBottomHeight),
+						properties.color);
 		}
 
 		return drawable;
 	}
 
-	sf::VertexArray getDrawable(const sf::Vector2f& pos, const sf::Vector2i& size, bool tiled = true,
-								const sf::Color& color = sf::Color::White)
+	sf::VertexArray getDrawable(const sf::Vector2f& pos, const sf::Vector2i& size,
+								const RenderProperties& properties = RenderProperties())
 	{
-		return getDrawable(pos.x, pos.y, size.x, size.y, tiled, color);
+		return getDrawable(pos.x, pos.y, size.x, size.y, properties);
 	}
 
 	const sf::Texture& getTexture() { return texture; }

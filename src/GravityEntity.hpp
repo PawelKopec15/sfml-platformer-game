@@ -8,12 +8,13 @@
 class GravityEntity
 {
 public:
-	GravityEntity(const sf::Vector2f& position, float gravityConstant = D_GRAV_CONSTANT,
-				  float terminalVelocity = D_TERMINAL_VEL)
+	explicit GravityEntity(const sf::Vector2f& position) : position(position) { sprite.setPosition(position); }
+	GravityEntity(const sf::Vector2f& position, float gravityConstant, float terminalVelocity)
 		: position(position), gravityConstant(gravityConstant), terminalVelocity(terminalVelocity)
 	{
 		sprite.setPosition(position);
 	}
+
 	virtual ~GravityEntity() = default;
 
 	virtual void process(sf::Int64 delta)
@@ -63,8 +64,8 @@ protected:
 	sf::Vector2f position;
 	sf::Vector2f moveVector = sf::Vector2f(0, 0);
 
-	float gravityConstant;
-	float terminalVelocity;
+	float gravityConstant  = D_GRAV_CONSTANT;
+	float terminalVelocity = D_TERMINAL_VEL;
 
 	AnimatedSprite sprite;
 };

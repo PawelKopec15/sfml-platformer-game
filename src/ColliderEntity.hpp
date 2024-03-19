@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>
+
 #include "CollisionBody.hpp"
 #include "GlobalDefines.hpp"
 #include "GravityEntity.hpp"
@@ -7,13 +9,14 @@
 class ColliderEntity : public GravityEntity
 {
 public:
-	ColliderEntity(const sf::Vector2f& position, const sf::Vector2f& colliderSize = sf::Vector2f(14.f, 13.f),
-				   const sf::Vector2f& colliderOffset = sf::Vector2f(0.f, 0.f), float gravityConstant = D_GRAV_CONSTANT,
-				   float terminalVelocity = D_TERMINAL_VEL)
-		: GravityEntity(position, gravityConstant, terminalVelocity),
+	template <typename... Args>
+	ColliderEntity(const sf::Vector2f& position, const sf::Vector2f& colliderSize, const sf::Vector2f& colliderOffset,
+				   Args&&... args)
+		: GravityEntity(position, std::forward<Args>(args)...),
 		  collider(position + colliderOffset, colliderSize, sf::Color(0, 0, 255, 128)),
 		  colliderOffset(colliderOffset)
 	{}
+
 	~ColliderEntity() override = default;
 
 	void process(sf::Int64 delta) override { this->GravityEntity::process(delta); }
@@ -51,7 +54,7 @@ public:
 
 protected:
 	CollisionBody collider;
-	sf::Vector2f colliderOffset;
+	sf::Vector2f colliderOffset = sf::Vector2f(0.f, 0.f);
 
 	bool onFloor     = false;
 	bool onCeil      = false;

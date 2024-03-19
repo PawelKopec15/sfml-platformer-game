@@ -5,6 +5,7 @@
 
 #include "BitmapFont.hpp"
 #include "GuiElement.hpp"
+#include "Vector2fFunctions.hpp"
 
 class GuiLabel : public GuiElement
 {
@@ -58,6 +59,14 @@ protected:
 		{
 			if (rect.getPosition() + textPosCorrection != textDrawable.second.getPosition())
 				generateTextDrawable();
+
+			if (textDrawable.second.width > rect.width || textDrawable.second.height > rect.height)
+			{
+				rect =
+					sf::FloatRect(rect.getPosition(), sf::Vector2f(std::fmax(rect.width, textDrawable.second.width),
+																   std::fmax(rect.height, textDrawable.second.height)));
+				parent->childHasBeenResized(window);
+			}
 
 			window.draw(textDrawable.first, &font->getFontTexture());
 		}

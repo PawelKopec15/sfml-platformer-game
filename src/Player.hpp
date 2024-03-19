@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "ColliderEntity.hpp"
+#include "HitboxEntity.hpp"
 #include "Timer.hpp"
 
 class Controls
@@ -41,7 +41,7 @@ public:
 		}
 	}
 
-	Key getKey(uint32_t index) { return arr[index]; }
+	const Key& getKey(uint32_t index) const { return arr[index]; }
 
 private:
 	void _updateKeyStatus()
@@ -72,7 +72,7 @@ private:
 class Player : public ColliderEntity
 {
 public:
-	Player(const sf::Vector2f& position, Controls controls)
+	Player(const sf::Vector2f& position, const Controls& controls)
 		: ColliderEntity(position, sf::Vector2f(14.f, 14.f), sf::Vector2f(-7.f, -7.f)), controls(controls)
 	{}
 	~Player() override = default;
@@ -118,10 +118,11 @@ public:
 		coyoteTimer.tick(delta);
 		if (getCanJump() && controls.getKey(4).justPressed)
 		{
-			const float secretCrustyCrabFormula =
+			const float secretCrabbyPattyFormula =
 				(std::max(std::fabs(moveVector.x), walkSpeed) / maxRunSpeed) * maxJumpSpeed * 0.4f +
 				maxJumpSpeed * 0.65f;
-			moveVector.y = -secretCrustyCrabFormula;
+
+			moveVector.y = -secretCrabbyPattyFormula;
 			setCanJump(false);
 			bigJump = true;
 		}
@@ -166,6 +167,17 @@ public:
 		this->ColliderEntity::process(delta);
 	}
 
+	void bounceOff()
+	{
+		if (controls.getKey(4).isPressed)
+		{
+			bigJump      = true;
+			moveVector.y = -bounceJumpSpeed;
+		}
+		else
+			moveVector.y = -bounceJumpSpeed / 2.f;
+	}
+
 	void setCanJump(bool val)
 	{
 		if (val)
@@ -183,8 +195,9 @@ private:
 
 	int lookDir = 1;
 
-	const float maxJumpSpeed = 3.f;
-	bool bigJump             = false;
+	const float maxJumpSpeed    = 3.f;
+	const float bounceJumpSpeed = 2.f;
+	bool bigJump                = false;
 
 	const float walkSpeed       = 0.7f;
 	const float maxRunSpeed     = 1.45f;

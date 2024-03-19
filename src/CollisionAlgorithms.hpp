@@ -21,7 +21,7 @@ public:
 	CollisionAlgorithms &operator=(CollisionAlgorithms &&) = delete;
 	CollisionAlgorithms &operator=(const CollisionAlgorithms &) = delete;
 
-	sf::Vector2f StaticVectorDifferenceCollisionCheck(
+	sf::Vector2f AABBWithStaticBodiesCollisionCheck(
 		std::map<sf::Vector2f, std::vector<std::shared_ptr<CollisionBody>>, Vector2fCompare> &outCollision,
 		ColliderEntity &outEntity, const std::vector<sf::Vector2f> &chunks, bool debugPrint = false)
 	{

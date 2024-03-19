@@ -23,6 +23,12 @@ public:
 	void setRect(const sf::FloatRect& val) { rect = val; }
 	void setNineSlice(const std::shared_ptr<NineSlice>& val) { nineSlice = val; }
 
+	void setPosition(const sf::Vector2f& val)
+	{
+		rect.left = val.x;
+		rect.top  = val.y;
+	}
+
 	void setInnerMargins(const GuiMargins& val) { innerMargins = val; }
 	void setOuterMargins(const GuiMargins& val) { outerPadding = val; }
 
@@ -35,7 +41,7 @@ public:
 			children.push_back(child);
 		}
 	}
-	void addChild(const std::shared_ptr<GuiElement>& val)
+	void addChild(std::shared_ptr<GuiElement> val)
 	{
 		val->setParent(std::shared_ptr<GuiElement>(this));
 		children.push_back(val);
@@ -131,7 +137,8 @@ protected:
 		const auto previousAvailableSpace = availableSpace;
 		auto rects                        = layoutManager->doYourThing(availableSpace, sizes);
 
-		if (availableSpace != previousAvailableSpace)
+		if (availableSpace.width > previousAvailableSpace.width ||
+			availableSpace.height > previousAvailableSpace.height)
 		{
 			rect.top = availableSpace.top - innerMargins.top - outerPadding.top;
 			rect.height =
@@ -155,7 +162,8 @@ protected:
 	{
 		if (nineSlice)
 		{
-			window.draw(nineSlice->getDrawable(rect.getPosition(), {(int)rect.width, (int)rect.height}, false),
+			window.draw(nineSlice->getDrawable(rect.getPosition(), {(int)rect.width, (int)rect.height},
+											   NineSlice::RenderProperties(false)),
 						&nineSlice->getTexture());
 		}
 	}

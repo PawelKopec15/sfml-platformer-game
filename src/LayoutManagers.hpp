@@ -54,6 +54,7 @@ protected:
 															 const sf::Vector2f& minimumSpaceSize,
 															 const std::vector<sf::Vector2f>& innerElementSizes)
 	{
+		// To specifically be overriden in child classes.
 		return std::vector<sf::FloatRect>();
 	}
 };
@@ -98,7 +99,7 @@ private:
 					break;
 			}
 
-			toRet.push_back({left, currentY, size.x, size.y});
+			toRet.push_back({left + availableSpace.left, currentY + availableSpace.top, size.x, size.y});
 
 			currentY += size.y + extraSpacing + getElementMargins().bottom;
 		}

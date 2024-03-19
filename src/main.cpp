@@ -7,6 +7,7 @@
 #include <valarray>
 #include <vector>
 
+#include "Area2D.hpp"
 #include "BitmapFont.hpp"
 #include "Camera.hpp"
 #include "CollisionAlgorithms.hpp"
@@ -61,7 +62,7 @@ void handleSpriteInitPlayer(Player& outPlayer, sf::Texture& outTex)
 
 int main()
 {
-	auto window = sf::RenderWindow{{1024u, 768u}, "Random Project 2", sf::Style::Default};
+	auto window = sf::RenderWindow{{1024u, 768u}, "Simple Platformer Game Project", sf::Style::Default};
 	window.setFramerateLimit(144);
 
 	// Set the locale to support Unicode
@@ -70,6 +71,25 @@ int main()
 	BitmapFont fontKubasta;
 	if (!fontKubasta.create("../assets/font/kubasta_regular_8.PNG", "../assets/font/kubasta_regular_8.fnt"))
 		std::cerr << "Error loading kubasta regular 8 font as BitmapFont" << std::endl;
+
+	// Debug and debug GUI
+	bool debugMode = false;
+
+	NineSlice gui2;
+	gui2.setTexture("../assets/graphics/ui/nineslice2.png");
+	gui2.setSlicing({0, 0, 24, 24});
+
+	GuiElement debugGui({0, 120, 42, 32}, std::make_shared<NineSlice>(gui2));
+	debugGui.setLayoutManager(std::make_shared<VBoxLayoutManager>());
+	debugGui.setInnerMargins(GuiMargins(4, 4, 4, 4));
+
+	GuiLabel _debugLabelDelta({0, 96, 42, 16}, std::make_shared<BitmapFont>(fontKubasta), L"delta= ");
+	auto debugLabelDelta = std::make_shared<GuiLabel>(_debugLabelDelta);
+	debugGui.addChild(debugLabelDelta);
+
+	GuiLabel _debugLabelFPS({0, 118, 42, 16}, std::make_shared<BitmapFont>(fontKubasta), L"FPS= ");
+	auto debugLabelFPS = std::make_shared<GuiLabel>(_debugLabelFPS);
+	debugGui.addChild(debugLabelFPS);
 
 	// Test entities
 
@@ -85,26 +105,6 @@ int main()
 	sf::Texture playerTexture;
 	handleSpriteInitPlayer(player, playerTexture);
 
-	// Test gui
-
-	// NineSlice gui3;
-	// gui3.setTexture("../assets/graphics/ui/nineslice3.png");
-	// gui3.setSlicing({0, 0, 16, 16}, {5, 5, 6, 6});
-	// NineSlice button1;
-	// button1.setTexture("../assets/graphics/ui/button1.png");
-	// button1.setSlicing({0, 0, 16, 16}, {5, 5, 6, 6});
-
-	// GuiElement mainGuiElement({10, 128, 100, 100}, std::make_shared<NineSlice>(gui3));
-	// mainGuiElement.setLayoutManager(std::make_shared<VBoxLayoutManager>());
-
-	// GuiElement part1({0, 128, 80, 0}, std::make_shared<NineSlice>(button1));
-	// part1.setLayoutManager(std::make_shared<VBoxLayoutManager>());
-
-	// GuiLabel labelTest({0, 0, 0, 0}, std::make_shared<BitmapFont>(fontKubasta), L"Hello", sf::Color::Black);
-
-	// part1.addChild(std::make_shared<GuiLabel>(labelTest));
-	// mainGuiElement.addChild(std::make_shared<GuiElement>(part1));
-
 	//  ||--------------------------------------------------------------------------------||
 	//  ||                                    Main loop                                   ||
 	//  ||--------------------------------------------------------------------------------||
@@ -117,7 +117,7 @@ int main()
 			if (event.type == sf::Event::Closed)
 				window.close();
 
-			if (event.type == sf::Event::KeyPressed)
+			if (event.type == sf::Event::KeyPressed && debugMode)
 			{
 				switch (event.key.scancode)
 				{
@@ -141,6 +141,8 @@ int main()
 						break;
 				}
 			}
+			if (event.type == sf::Event::KeyPressed && event.key.scancode == sf::Keyboard::Scan::Numpad0)
+				debugMode = !debugMode;
 		}
 
 		auto delta = clock.restart().asMicroseconds();
@@ -159,7 +161,7 @@ int main()
 		// Collision
 		{
 			auto beforeMoveVec = player.getMoveVector();
-			auto resVec = CollisionAlgorithms::Get().StaticVectorDifferenceCollisionCheck(level.Collision, player, {});
+			auto resVec = CollisionAlgorithms::Get().AABBWithStaticBodiesCollisionCheck(level.Collision, player, {});
 
 			player.move(resVec);
 
@@ -192,18 +194,20 @@ int main()
 		}
 		else
 		{
-			level.accessCamera().followEntity(player, player.accessCollider().getCollisionBox().getSize().x / 2.f,
-											  player.accessCollider().getCollisionBox().getSize().y / 2.f);
+			level.accessCamera().followEntity(player, player.accessCollider().getRectangleShape().getSize().x / 2.f,
+											  player.accessCollider().getRectangleShape().getSize().y / 2.f);
 		}
 		window.setView(level.accessCamera().getView());
 
 		// Debug text
-		std::wstring debugTextString =
-			L"delta: " + std::to_wstring(delta) + L"\nFPS: " + std::to_wstring(delta > 0 ? 1000000 / delta : 0);
+		if (debugMode)
+		{
+			debugLabelDelta->setText(L"delta: " + std::to_wstring(delta) + L"\nFPS: " +
+									 std::to_wstring(delta > 0 ? 1000000 / delta : 0));
 
-		sf::Vector2f debugTextPos =
-			sf::Vector2f(level.accessCamera().getView().getCenter() - (level.accessCamera().getView().getSize() / 2.f) +
-						 sf::Vector2f(2.f, -4.f));
+			debugGui.setPosition(sf::Vector2f(level.accessCamera().getView().getCenter() -
+											  (level.accessCamera().getView().getSize() / 2.f)));
+		}
 
 		// ||--------------------------------------------------------------------------------||
 		// ||                                     Render                                     ||
@@ -213,20 +217,22 @@ int main()
 
 		window.draw(player.getSprite());
 
-		for (auto const& pair : level.Collision)
+		if (debugMode)
 		{
-			auto vector = pair.second;
-			for (auto&& cb : vector)
+			for (auto const& pair : level.Collision)
 			{
-				window.draw(cb->getCollisionBox());
+				auto vector = pair.second;
+				for (auto&& cb : vector)
+				{
+					window.draw(cb->getRectangleShape());
+				}
 			}
+
+			window.draw(player.accessCollider().getRectangleShape());
+
+			debugGui.render(window);
+			// debugGui.print();
 		}
-
-		window.draw(player.accessCollider().getCollisionBox());
-
-		window.draw(fontKubasta.getTextDrawable(debugTextString, debugTextPos).first, &fontKubasta.getFontTexture());
-
-		// mainGuiElement.render(window);
 
 		window.display();
 	}
