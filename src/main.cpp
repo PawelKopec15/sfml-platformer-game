@@ -70,11 +70,10 @@ int main()
 	if (!fontKubasta.create("../assets/font/kubasta_regular_8.PNG", "../assets/font/kubasta_regular_8.fnt"))
 		std::cerr << "Error loading kubasta regular 8 font as BitmapFont" << std::endl;
 
-	// Debug and debug GUI
+	// Debug
 	bool debugMode = false;
 
 	// Test entities
-
 	Level level;
 	level.create("leveldata/testmap1.tmx");
 	level.accessCamera().setView(sf::View(sf::FloatRect(0.f, 0.f, 256.f, 192.f)));

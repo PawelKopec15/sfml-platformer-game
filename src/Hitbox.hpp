@@ -14,7 +14,7 @@ public:
 
 	std::pair<bool, uint32_t> hitboxesConnect(Hitbox& other)
 	{
-		if (!selfMask & other.getOtherMask())
+		if (!(selfMask & other.getOtherMask()))
 			return {false, 0};
 		return {intersects(other), selfMask & other.getOtherMask()};
 	}

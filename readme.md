@@ -1,6 +1,33 @@
-## Platformer game I am currently developing from scratch using C++ and SFML.
+A simple platform game demo/engine <br>
+Written entirely in C++ and SFML <br>
 
-<video width="640" height="360" controls>
-  <source src="media/video1.mkv" type="video/x-matroska">
-  Your browser does not support the video tag.
-</video>
+>
+>Implemented features so far:
+>- Classic platform game style player movement
+>- Pixel perfect terrain collision using AABB
+>- System for key frame animations (with support for interpolation)
+>- Animated sprites using the mentioned system
+>- A simple .xml parser
+>- A simple .tmx parser, which allows the game to directly load level data created with *[Tiled level editor](https://www.mapeditor.org)*
+>- System for pretty and precise camera movement with old school screen transitions
+>- Pixel perfect bitmap font parser and renderer
+>- Very flexible nine slice texture parser and renderer
+>
+
+---
+
+>
+>Project TODO list:
+>- [ ] slicing delta if too high
+>- [ ] global variables singleton
+>- [ ] source files arrangement
+>- [ ] proper chunking when collision
+>- [ ] adding terrain objects
+>- [ ] enemies, goombalike
+>- [ ] loading levels
+>- [ ] simple collectables
+>
+>Non essential TODO:
+>- [ ] bouncy objects
+>- [ ] slopes
+>
