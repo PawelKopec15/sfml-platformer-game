@@ -12,8 +12,6 @@
 #include "Camera.hpp"
 #include "CollisionAlgorithms.hpp"
 #include "CollisionBody.hpp"
-#include "GuiElement.hpp"
-#include "GuiLabel.hpp"
 #include "Level.hpp"
 #include "NineSlice.hpp"
 #include "Player.hpp"
@@ -74,22 +72,6 @@ int main()
 
 	// Debug and debug GUI
 	bool debugMode = false;
-
-	NineSlice gui2;
-	gui2.setTexture("../assets/graphics/ui/nineslice2.png");
-	gui2.setSlicing({0, 0, 24, 24});
-
-	GuiElement debugGui({0, 120, 42, 32}, std::make_shared<NineSlice>(gui2));
-	debugGui.setLayoutManager(std::make_shared<VBoxLayoutManager>());
-	debugGui.setInnerMargins(GuiMargins(4, 4, 4, 4));
-
-	GuiLabel _debugLabelDelta({0, 96, 42, 16}, std::make_shared<BitmapFont>(fontKubasta), L"delta= ");
-	auto debugLabelDelta = std::make_shared<GuiLabel>(_debugLabelDelta);
-	debugGui.addChild(debugLabelDelta);
-
-	GuiLabel _debugLabelFPS({0, 118, 42, 16}, std::make_shared<BitmapFont>(fontKubasta), L"FPS= ");
-	auto debugLabelFPS = std::make_shared<GuiLabel>(_debugLabelFPS);
-	debugGui.addChild(debugLabelFPS);
 
 	// Test entities
 
@@ -199,15 +181,10 @@ int main()
 		}
 		window.setView(level.accessCamera().getView());
 
-		// Debug text
-		if (debugMode)
-		{
-			debugLabelDelta->setText(L"delta: " + std::to_wstring(delta) + L"\nFPS: " +
-									 std::to_wstring(delta > 0 ? 1000000 / delta : 0));
-
-			debugGui.setPosition(sf::Vector2f(level.accessCamera().getView().getCenter() -
-											  (level.accessCamera().getView().getSize() / 2.f)));
-		}
+		auto debugText =
+			L"delta: " + std::to_wstring(delta) + L"\nFPS: " + std::to_wstring(delta > 0 ? 1000000 / delta : 0);
+		auto debugTextPos = level.accessCamera().getView().getCenter() -
+							(level.accessCamera().getView().getSize() / 2.f) + sf::Vector2f(2.f, -2.f);
 
 		// ||--------------------------------------------------------------------------------||
 		// ||                                     Render                                     ||
@@ -229,9 +206,7 @@ int main()
 			}
 
 			window.draw(player.accessCollider().getRectangleShape());
-
-			debugGui.render(window);
-			// debugGui.print();
+			window.draw(fontKubasta.getTextDrawable(debugText, debugTextPos).first, &fontKubasta.getFontTexture());
 		}
 
 		window.display();
