@@ -3,7 +3,7 @@ Written entirely in C++ and SFML <br>
 
 >
 >Implemented features so far:
->- Classic platform game style player movement
+>- Classic platform game style player movement, with coyote jump and other quality of life changes added
 >- Pixel perfect terrain collision using AABB
 >- System for key frame animations (with support for interpolation)
 >- Animated sprites using the mentioned system
@@ -19,7 +19,7 @@ Written entirely in C++ and SFML <br>
 >
 >Project TODO list:
 >- [ ] slicing delta if too high
->- [ ] global variables singleton
+>- [ ] proper program structure
 >- [ ] source files arrangement
 >- [ ] proper chunking when collision
 >- [ ] adding terrain objects
@@ -30,4 +30,6 @@ Written entirely in C++ and SFML <br>
 >Non essential TODO:
 >- [ ] bouncy objects
 >- [ ] slopes
+>- [ ] global variables singleton
+>- [ ] one way collisions
 >

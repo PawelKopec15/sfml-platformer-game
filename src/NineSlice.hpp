@@ -47,7 +47,7 @@ public:
 
 	void setTextureRectOnly(const sf::IntRect& fullRect) { textureRect = fullRect; }
 
-	sf::VertexArray getDrawable(float x, float y, int width, int height,
+	sf::VertexArray getDrawable(float x, float y, float width, float height,
 								const RenderProperties& properties = RenderProperties())
 	{
 		sf::VertexArray drawable(sf::Quads);
@@ -63,8 +63,8 @@ public:
 		const int texTopHeight    = std::max(centerSlice.top - textureRect.top, 0);
 		const int texBottomHeight = std::max(textureRect.height - centerSlice.top - centerSlice.height, 0);
 
-		const int centerSpaceWidth  = std::max(width - texLeftWidth - texRightWidth, 0);
-		const int centerSpaceHeight = std::max(height - texTopHeight - texBottomHeight, 0);
+		const float centerSpaceWidth  = std::max(width - texLeftWidth - texRightWidth, 0.f);
+		const float centerSpaceHeight = std::max(height - texTopHeight - texBottomHeight, 0.f);
 
 		const std::array<float, 3> xPositions    = {x, x + texLeftWidth, x + texLeftWidth + centerSpaceWidth};
 		const std::array<float, 3> xTexPositions = {0, (float)centerSlice.left,

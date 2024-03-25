@@ -23,7 +23,7 @@ public:
 	{
 		bool parseError = parser.parse(levelPath, print);
 
-		handleDebugCollision();
+		_handleDebugCollisionLayer();
 
 		camera.findCameraZones(parser.getMap());
 
@@ -36,7 +36,7 @@ private:
 	TMXParser parser;
 	Camera camera;
 
-	void handleDebugCollision()
+	void _handleDebugCollisionLayer()
 	{
 		TMXLayer collisionLayer;
 		for (const auto& layer : parser.getMap().layers)

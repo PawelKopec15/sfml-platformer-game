@@ -179,9 +179,8 @@ public:
 				{
 					const std::string& propertyName   = propertyPair.first;
 					const TMXObjectProperty& property = propertyPair.second;
-					std::cout << "      Property Name: " << propertyName << std::endl;
-					std::cout << "      Property Type: " << property.type << std::endl;
-					std::cout << "      Property Value: " << property.value << std::endl;
+					std::cout << "      " << propertyName << " (" << property.type << ") : " << property.value
+							  << std::endl;
 				}
 			}
 		}
@@ -240,25 +239,33 @@ private:
 
 		for (const auto& attr : object.attributes)
 		{
-			if (attr.name == "template")
+			if (attr.name != "template")
+				continue;
+
+			auto it = objectTemplates.find(attr.value);
+
+			if (it != objectTemplates.end())
+				toRet = it->second;
+			else
 			{
-				auto it = objectTemplates.find(attr.value);
-
-				if (it != objectTemplates.end())
-					toRet = it->second;
-				else
+				XMLParser tempParser;
+				TMXObject templateObject;
+				if (tempParser.parseFile(attr.value))
 				{
-					XMLParser tempParser;
-					TMXObject templateObject;
-					if (tempParser.parseFile(attr.value))
-						templateObject = parseObject(tempParser.getRoot().children[0]);
-
-					objectTemplates[attr.value] = templateObject;
-
-					toRet = templateObject;
+					for (const auto& child : tempParser.getRoot().children)
+						if (child.name == "object")
+							templateObject = parseObject(child);
 				}
+
+				objectTemplates[attr.value] = templateObject;
+
+				toRet = templateObject;
 			}
-			else if (attr.name == "name")
+		}
+
+		for (const auto& attr : object.attributes)
+		{
+			if (attr.name == "name")
 				toRet.name = attr.value;
 			else if (attr.name == "type")
 				toRet.type = attr.value;
@@ -274,10 +281,10 @@ private:
 				toRet.rotation = std::stof(attr.value);
 		}
 		if (!object.children.empty())
+		{
 			for (const auto& property : object.children[0].children)
-			{
 				toRet.properties[getAttributeValue(property, "name")] = parseObjectProperty(property);
-			}
+		}
 
 		return toRet;
 	}
