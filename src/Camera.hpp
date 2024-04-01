@@ -18,7 +18,7 @@ public:
 		for (const auto& objectGroup : map.objectGroups)
 		{
 			if (objectGroup.second.name == "CameraZones")
-				handleCameraZoneLayer(objectGroup.second.objects);
+				_handleCameraZoneObjects(objectGroup.second.objects);
 		}
 	}
 
@@ -337,11 +337,9 @@ private:
 		return result;
 	}
 
-	void handleCameraZoneLayer(const std::map<int, TMXObject>& layer)
+	void _handleCameraZoneObjects(std::map<int, TMXObject> objects)
 	{
-		auto layerCopy = layer;
-
-		for (auto& object : layerCopy)
+		for (auto& object : objects)
 		{
 			if (object.second.type != "CameraZone")
 				continue;

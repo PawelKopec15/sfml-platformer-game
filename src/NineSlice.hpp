@@ -36,6 +36,12 @@ public:
 	{
 		textureRect       = fullRect;
 		this->centerSlice = centerSlice;
+
+		// Calculate dimensions of the slices
+		texLeftWidth    = std::max(centerSlice.left - textureRect.left, 0);
+		texRightWidth   = std::max(textureRect.width - centerSlice.left - centerSlice.width, 0);
+		texTopHeight    = std::max(centerSlice.top - textureRect.top, 0);
+		texBottomHeight = std::max(textureRect.height - centerSlice.top - centerSlice.height, 0);
 	}
 	void setSlicing(const sf::IntRect& fullRect)
 	{
@@ -44,8 +50,6 @@ public:
 
 		setSlicing(fullRect, sf::IntRect(fullRect.left + hor, fullRect.top + ver, hor, ver));
 	}
-
-	void setTextureRectOnly(const sf::IntRect& fullRect) { textureRect = fullRect; }
 
 	sf::VertexArray getDrawable(float x, float y, float width, float height,
 								const RenderProperties& properties = RenderProperties())
@@ -57,15 +61,10 @@ public:
 		if (textureRect.width <= 0 || textureRect.height <= 0)
 			setSlicing(sf::IntRect(0, 0, textureRect.width, textureRect.height));
 
-		// Calculate dimensions of the slices
-		const int texLeftWidth    = std::max(centerSlice.left - textureRect.left, 0);
-		const int texRightWidth   = std::max(textureRect.width - centerSlice.left - centerSlice.width, 0);
-		const int texTopHeight    = std::max(centerSlice.top - textureRect.top, 0);
-		const int texBottomHeight = std::max(textureRect.height - centerSlice.top - centerSlice.height, 0);
-
 		const float centerSpaceWidth  = std::max(width - texLeftWidth - texRightWidth, 0.f);
 		const float centerSpaceHeight = std::max(height - texTopHeight - texBottomHeight, 0.f);
 
+		// Values that are used many times
 		const std::array<float, 3> xPositions    = {x, x + texLeftWidth, x + texLeftWidth + centerSpaceWidth};
 		const std::array<float, 3> xTexPositions = {0, (float)centerSlice.left,
 													(float)(centerSlice.left + centerSlice.width)};
@@ -156,7 +155,7 @@ public:
 		return drawable;
 	}
 
-	sf::VertexArray getDrawable(const sf::Vector2f& pos, const sf::Vector2i& size,
+	sf::VertexArray getDrawable(const sf::Vector2f& pos, const sf::Vector2f& size,
 								const RenderProperties& properties = RenderProperties())
 	{
 		return getDrawable(pos.x, pos.y, size.x, size.y, properties);
@@ -164,10 +163,20 @@ public:
 
 	const sf::Texture& getTexture() { return texture; }
 
+	int getTexLeftWidth() { return texLeftWidth; }
+	int getTexRightWidth() { return texRightWidth; }
+	int getTexTopHeight() { return texTopHeight; }
+	int getTexBottomHeight() { return texBottomHeight; }
+
 private:
 	sf::Texture texture;
 	sf::IntRect textureRect;
 	sf::IntRect centerSlice;
+
+	int texLeftWidth    = 0;
+	int texRightWidth   = 0;
+	int texTopHeight    = 0;
+	int texBottomHeight = 0;
 
 	void addQuad(sf::VertexArray& outDrawable, const sf::Vector2f& pos, const sf::Vector2f& size,
 				 const sf::Vector2f& relativeTexPos, const sf::Vector2f& texSize, const sf::Color& color)

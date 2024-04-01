@@ -9,12 +9,14 @@
 
 #include "CollisionBody.hpp"
 #include "TMXParser.hpp"
+#include "TerrainBody.hpp"
 #include "Vector2fFunctions.hpp"
 
 class Level
 {
 public:
 	std::map<sf::Vector2f, std::vector<std::shared_ptr<CollisionBody>>, Vector2fCompare> Collision;
+	std::map<sf::Vector2f, std::vector<std::shared_ptr<TerrainBody>>, Vector2fCompare> Terrain;
 
 	Level()  = default;
 	~Level() = default;
@@ -23,7 +25,8 @@ public:
 	{
 		bool parseError = parser.parse(levelPath, print);
 
-		_handleDebugCollisionLayer();
+		_handleLayers();
+		_handleObjectGroups();
 
 		camera.findCameraZones(parser.getMap());
 
@@ -36,15 +39,26 @@ private:
 	TMXParser parser;
 	Camera camera;
 
-	void _handleDebugCollisionLayer()
+	void _handleTerrainObjects(std::map<int, TMXObject> objects)
 	{
-		TMXLayer collisionLayer;
-		for (const auto& layer : parser.getMap().layers)
+		for (auto& object : objects)
 		{
-			if (layer.second.name == "Collision")
-				collisionLayer = layer.second;
-		}
+			if (object.second.type != "Terrain")
+				continue;
 
+			auto rect = sf::FloatRect(object.second.x, object.second.y, object.second.width, object.second.height);
+
+			auto props = TerrainBody::TerrainProperties();
+
+			props.noBottom = object.second.properties["NoBottom"].value == "true";
+			props.noLeft   = object.second.properties["NoLeft"].value == "true";
+			props.noRight  = object.second.properties["NoRight"].value == "true";
+			props.noTop    = object.second.properties["NoTop"].value == "true";
+		}
+	}
+
+	void _handleDebugCollisionLayer(const TMXLayer& collisionLayer)
+	{
 		const auto tileWidth  = parser.getMap().tileWidth;
 		const auto tileHeight = parser.getMap().tileHeight;
 
@@ -67,6 +81,24 @@ private:
 					}
 				}
 			}
+		}
+	}
+
+	void _handleLayers()
+	{
+		for (const auto& layer : parser.getMap().layers)
+		{
+			if (layer.second.name == "Collision")
+				_handleDebugCollisionLayer(layer.second);
+		}
+	}
+
+	void _handleObjectGroups()
+	{
+		for (const auto& objectGroup : parser.getMap().objectGroups)
+		{
+			if (objectGroup.second.name == "Terrain")
+				_handleTerrainObjects(objectGroup.second.objects);
 		}
 	}
 };
