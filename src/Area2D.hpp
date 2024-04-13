@@ -27,6 +27,7 @@ public:
 	const sf::Vector2f& getPosition() { return area.getPosition(); }
 	const sf::Vector2f& getSize() { return area.getSize(); }
 	const sf::Color& getColor() { return area.getFillColor(); }
+	sf::FloatRect getRect() { return {area.getPosition(), area.getSize()}; }
 
 	void move(const sf::Vector2f& offset) { area.move(offset); }
 

@@ -22,12 +22,12 @@ Written entirely in C++ and SFML <br>
 >- [ ] proper program structure
 >- [ ] source files arrangement
 >- [ ] proper chunking when collision
->- [ ] adding terrain objects
 >- [ ] enemies, goombalike
 >- [ ] loading levels
 >- [ ] simple collectables
 >
 >Non essential TODO:
+>- [ ] adding terrain objects
 >- [ ] bouncy objects
 >- [ ] slopes
 >- [ ] global variables singleton

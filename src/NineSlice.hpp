@@ -25,6 +25,17 @@ public:
 	NineSlice()  = default;
 	~NineSlice() = default;
 
+	bool create(const std::string& path, const sf::IntRect& fullRect)
+	{
+		setSlicing(fullRect);
+		return setTexture(path);
+	}
+	bool create(const std::string& path, const sf::IntRect& fullRect, const sf::IntRect& centerSlice)
+	{
+		setSlicing(fullRect, centerSlice);
+		return setTexture(path);
+	}
+
 	bool setTexture(const std::string& path)
 	{
 		if (!texture.loadFromFile(path))
@@ -167,6 +178,7 @@ public:
 	int getTexRightWidth() { return texRightWidth; }
 	int getTexTopHeight() { return texTopHeight; }
 	int getTexBottomHeight() { return texBottomHeight; }
+	const sf::IntRect& getCenterSlice() { return centerSlice; }
 
 private:
 	sf::Texture texture;

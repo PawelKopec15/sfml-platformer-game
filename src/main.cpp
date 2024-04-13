@@ -16,7 +16,6 @@
 #include "NineSlice.hpp"
 #include "Player.hpp"
 #include "TMXParser.hpp"
-#include "TerrainBody.hpp"
 #include "Vector2fFunctions.hpp"
 
 void handleSpriteInitPlayer(Player& outPlayer, sf::Texture& outTex)
@@ -75,8 +74,9 @@ int main()
 	bool debugMode = false;
 
 	// Test entities
+
 	Level level;
-	level.create("leveldata/testmap1.tmx", true);
+	level.create("leveldata/testmap1.tmx", false);
 	level.accessCamera().setView(sf::View(sf::FloatRect(0.f, 0.f, 256.f, 192.f)));
 
 	Controls p1Controls;
@@ -191,13 +191,6 @@ int main()
 		// ||--------------------------------------------------------------------------------||
 
 		window.clear();
-
-		for (auto const& pair : level.Terrain)
-		{
-			auto vector = pair.second;
-			for (auto&& ter : vector)
-				window.draw(ter->getDrawable(), &ter->getTexture());
-		}
 
 		window.draw(player.getSprite());
 

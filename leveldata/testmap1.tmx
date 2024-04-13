@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="48" height="18" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="17">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="48" height="18" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#55aaff" nextlayerid="6" nextobjectid="18">
  <editorsettings>
   <chunksize width="8" height="6"/>
   <export format="tmx"/>
  </editorsettings>
  <tileset firstgid="1" source="../_dev/RandomProject2Tileset.tsx"/>
  <tileset firstgid="2" source="tiles_1.tsj"/>
- <layer id="1" name="Collision" width="48" height="18">
+ <layer id="1" name="Collision" width="48" height="18" visible="0">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -28,6 +28,28 @@
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 </data>
  </layer>
+ <layer id="5" name="Tiles" width="48" height="18">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,101,101,101,101,101,0,0,0,0,0,0,3,4,4,5,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,25,26,26,27,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,69,70,70,70,70,70,70,70,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,69,70,70,70,71,0,0,0,0,0,0,0,0,0,
+0,0,0,101,101,0,101,101,0,0,101,0,0,0,101,0,0,0,0,0,0,101,101,101,101,101,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,69,71,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,101,0,0,0,101,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,101,101,101,101,101,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,13,13,13,13,13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,101,101,101,0,0,0,0,0,0,0,0,0,0,69,70,71,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,56,57,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+5,0,0,0,0,0,0,0,0,69,71,0,0,0,56,57,0,0,0,0,78,79,0,0,0,101,101,101,101,101,0,13,13,0,0,0,0,0,0,0,0,0,69,70,71,0,0,0,
+27,0,0,0,0,3,5,0,0,13,13,0,0,0,78,79,0,0,0,0,3,5,0,0,0,0,0,0,0,0,0,13,13,13,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+27,0,0,0,0,25,27,0,0,0,0,0,0,0,3,5,0,0,0,0,25,27,13,0,0,0,0,0,0,0,0,13,13,13,13,0,0,0,0,0,0,0,0,0,0,0,0,0,
+4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4
+</data>
+ </layer>
  <objectgroup id="2" name="CameraZones">
   <object id="1" template="../assets/leveleditor/CameraZone.tx" type="CameraZone" x="0" y="96" width="512" height="192" rotation="0">
    <properties>
@@ -46,30 +68,6 @@
     <property name="Bottom" type="int" value="0"/>
     <property name="Left" type="int" value="-2"/>
     <property name="Top" type="int" value="-2"/>
-   </properties>
-  </object>
- </objectgroup>
- <objectgroup id="4" name="Terrain">
-  <object id="13" template="../assets/leveleditor/Terrain.tx" x="0" y="272" width="16" height="48">
-   <properties>
-    <property name="NoBottom" type="bool" value="true"/>
-    <property name="NoLeft" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="15" template="../assets/leveleditor/Terrain.tx" x="80" y="272" width="32" height="32">
-   <properties>
-    <property name="NoBottom" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="16" template="../assets/leveleditor/Terrain.tx" x="224" y="272" width="32" height="48">
-   <properties>
-    <property name="NoBottom" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="14" template="../assets/leveleditor/Terrain.tx" x="0" y="287.667" width="320" height="15.6667">
-   <properties>
-    <property name="NoBottom" type="bool" value="true"/>
-    <property name="NoLeft" type="bool" value="true"/>
    </properties>
   </object>
  </objectgroup>
