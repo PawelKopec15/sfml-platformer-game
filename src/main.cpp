@@ -20,14 +20,14 @@
 
 void handleSpriteInitPlayer(Player& outPlayer, sf::Texture& outTex)
 {
-	if (!outTex.loadFromFile("../assets/graphics/player_1.png"))
+	if (!outTex.loadFromFile("assets/graphics/player_1.png"))
 	{
 		std::cerr << "Error loading player sprite texture." << std::endl;
 	}
 	outPlayer.setSpriteTexture(outTex);
 	outPlayer.setSpriteTextureRect({0, 0, 16, 32});
 	outPlayer.setSpriteOrigin({8.f, 16.f});
-	outPlayer.setSpriteOffset({0.f, -10.f});
+	outPlayer.setSpriteOffset({0.f, -9.f});
 
 	KeyFrameAnimator<SpriteKeyType> standAnim;
 	standAnim.addKeyToKeyFrameTimeline(SpriteKeyType::RECT_X, 0, 0.f);
@@ -67,10 +67,10 @@ int main()
 	std::wcout.imbue(std::locale(""));
 
 	BitmapFont fontKubasta;
-	if (!fontKubasta.create("../assets/font/kubasta_regular_8.PNG", "../assets/font/kubasta_regular_8.fnt"))
+	if (!fontKubasta.create("assets/font/kubasta_regular_8.PNG", "assets/font/kubasta_regular_8.fnt"))
 		std::cerr << "Error loading kubasta regular 8 font as BitmapFont" << std::endl;
 
-	// Debug
+	// Debug mode
 	bool debugMode = false;
 
 	// Test entities
@@ -78,6 +78,10 @@ int main()
 	Level level;
 	level.create("leveldata/testmap1.tmx", false);
 	level.accessCamera().setView(sf::View(sf::FloatRect(0.f, 0.f, 256.f, 192.f)));
+
+	sf::Texture levelTiles;
+	if (!levelTiles.loadFromFile("assets/graphics/tiles_1.png"))
+		std::cerr << "Failed loading tiles_1.png" << std::endl;
 
 	Controls p1Controls;
 
@@ -99,6 +103,7 @@ int main()
 			if (event.type == sf::Event::Closed)
 				window.close();
 
+			// Handling debug mode toggles
 			if (event.type == sf::Event::KeyPressed && debugMode)
 			{
 				switch (event.key.scancode)
@@ -190,7 +195,24 @@ int main()
 		// ||                                     Render                                     ||
 		// ||--------------------------------------------------------------------------------||
 
-		window.clear();
+		window.clear(debugMode ? sf::Color::Black : level.getBackgroundColor());
+
+		// Drawing tiles
+		sf::Sprite tile(levelTiles);
+		for (auto const& pair : level.Collision)
+		{
+			auto vector = pair.second;
+			for (auto&& cb : vector)
+			{
+				auto id     = cb->getTileId();
+				int texLeft = id % (uint32_t)(levelTiles.getSize().x / (uint32_t)cb->getSize().x) * cb->getSize().x;
+				int texTop  = id / (uint32_t)(levelTiles.getSize().x / (uint32_t)cb->getSize().x) * cb->getSize().y;
+
+				tile.setTextureRect(sf::IntRect(texLeft, texTop, (int)cb->getSize().x, (int)cb->getSize().y));
+				tile.setPosition(cb->getPosition());
+				window.draw(tile);
+			}
+		}
 
 		window.draw(player.getSprite());
 

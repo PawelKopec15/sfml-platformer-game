@@ -8,13 +8,14 @@
 #include <vector>
 
 #include "CollisionBody.hpp"
+#include "StaticTile.hpp"
 #include "TMXParser.hpp"
 #include "Vector2fFunctions.hpp"
 
 class Level
 {
 public:
-	std::map<sf::Vector2f, std::vector<std::shared_ptr<CollisionBody>>, Vector2fCompare> Collision;
+	std::map<sf::Vector2f, std::vector<std::shared_ptr<StaticTile>>, Vector2fCompare> Collision;
 
 	Level()  = default;
 	~Level() = default;
@@ -32,11 +33,13 @@ public:
 
 	Camera& accessCamera() { return camera; }
 
+	const sf::Color& getBackgroundColor() { return parser.getMap().bgColor; }
+
 private:
 	TMXParser parser;
 	Camera camera;
 
-	void _handleDebugCollisionLayer(const TMXLayer& collisionLayer)
+	void _handleCollisionLayer(const TMXLayer& collisionLayer)
 	{
 		const auto tileWidth  = parser.getMap().tileWidth;
 		const auto tileHeight = parser.getMap().tileHeight;
@@ -47,17 +50,15 @@ private:
 			{
 				for (size_t j = 0; j < chunk.second.data[i].size(); ++j)
 				{
-					switch (chunk.second.data[i][j])
-					{
-						case 1:
-							Collision[sf::Vector2f(chunk.first.first, chunk.first.second)].push_back(
-								std::make_shared<CollisionBody>(CollisionBody(sf::Vector2f(
-									(chunk.first.first + j) * tileWidth, (chunk.first.second + i) * tileHeight))));
-							break;
+					const int data = chunk.second.data[i][j];
 
-						default:
-							break;
-					}
+					if (data <= 0)
+						continue;
+
+					Collision[sf::Vector2f(chunk.first.first, chunk.first.second)].push_back(
+						std::make_shared<StaticTile>(StaticTile(
+							sf::Vector2f((chunk.first.first + j) * tileWidth, (chunk.first.second + i) * tileHeight),
+							{(float)tileWidth, (float)tileHeight}, data - 1)));
 				}
 			}
 		}
@@ -68,7 +69,7 @@ private:
 		for (const auto& layer : parser.getMap().layers)
 		{
 			if (layer.second.name == "Collision")
-				_handleDebugCollisionLayer(layer.second);
+				_handleCollisionLayer(layer.second);
 		}
 	}
 };

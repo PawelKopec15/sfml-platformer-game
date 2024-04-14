@@ -6,6 +6,7 @@
 
 #include "ColliderEntity.hpp"
 #include "CollisionBody.hpp"
+#include "StaticTile.hpp"
 #include "Vector2fFunctions.hpp"
 
 class CollisionAlgorithms
@@ -22,7 +23,7 @@ public:
 	CollisionAlgorithms &operator=(const CollisionAlgorithms &) = delete;
 
 	sf::Vector2f AABBWithStaticBodiesCollisionCheck(
-		std::map<sf::Vector2f, std::vector<std::shared_ptr<CollisionBody>>, Vector2fCompare> &outCollision,
+		std::map<sf::Vector2f, std::vector<std::shared_ptr<StaticTile>>, Vector2fCompare> &outCollision,
 		ColliderEntity &outEntity, const std::vector<sf::Vector2f> &chunks, bool debugPrint = false)
 	{
 		auto chunksVector = getChunksVector(outCollision, chunks);
@@ -92,7 +93,7 @@ private:
 	const float tccTolerance = 2.2f;
 
 	std::vector<sf::Vector2f> getChunksVector(
-		std::map<sf::Vector2f, std::vector<std::shared_ptr<CollisionBody>>, Vector2fCompare> &outCollision,
+		std::map<sf::Vector2f, std::vector<std::shared_ptr<StaticTile>>, Vector2fCompare> &outCollision,
 		const std::vector<sf::Vector2f> &chunks)
 	{
 		auto chunksVector = chunks;

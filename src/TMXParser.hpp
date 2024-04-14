@@ -2,6 +2,7 @@
 
 #include <map>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -70,6 +71,7 @@ struct TMXMap
 	int tileWidth           = 0;
 	int tileHeight          = 0;
 	bool infinite           = false;
+	sf::Color bgColor       = sf::Color::Black;
 
 	TMXEditorSettings editorSettings;
 	std::vector<TMXTileSet> tileSets           = {};
@@ -116,6 +118,7 @@ public:
 		std::cout << "  Tile Width: " << map.tileWidth << std::endl;
 		std::cout << "  Tile Height: " << map.tileHeight << std::endl;
 		std::cout << "  Infinite: " << (map.infinite ? "true" : "false") << std::endl;
+		std::cout << "  Background color: 0x" << std::hex << map.bgColor.toInteger() << std::dec << std::endl;
 
 		std::cout << "Editor Settings:" << std::endl;
 		std::cout << "  Chunk Width: " << map.editorSettings.chunkWidth << std::endl;
@@ -403,12 +406,28 @@ private:
 		return toRet;
 	}
 
+	sf::Color stringToColor(const std::string& str)
+	{
+		if (str.length() < 7 || str.at(0) != '#')
+			return sf::Color::Black;
+
+		std::stringstream ss;
+		ss << std::hex << str.substr(1).append("00");
+
+		uint32_t result;
+		ss >> result;
+
+		return sf::Color(result);
+	}
+
 	void parseFromXMLParser(const XMLElement& root)
 	{
 		for (const auto& attr : root.attributes)
 		{
 			if (attr.name == "orientation")
 				map.orientation = attr.value;
+			else if (attr.name == "backgroundcolor")
+				map.bgColor = stringToColor(attr.value);
 			else if (attr.name == "renderorder")
 				map.renderOrder = attr.value;
 			else if (attr.name == "width")

@@ -2,7 +2,7 @@ A simple platform game demo/engine <br>
 Written entirely in C++ and SFML <br>
 
 >
->Implemented features so far:
+>Features I've implemented so far:
 >- Classic platform game style player movement, with coyote jump and other quality of life changes added
 >- Pixel perfect terrain collision using AABB
 >- System for key frame animations (with support for interpolation)
@@ -18,6 +18,7 @@ Written entirely in C++ and SFML <br>
 
 >
 >Project TODO list:
+>- [x] visible terrain tiles
 >- [ ] slicing delta if too high
 >- [ ] proper program structure
 >- [ ] source files arrangement
@@ -32,4 +33,5 @@ Written entirely in C++ and SFML <br>
 >- [ ] slopes
 >- [ ] global variables singleton
 >- [ ] one way collisions
+>- [ ] tileset texture files being deduced from .tmx file
 >
