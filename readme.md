@@ -19,13 +19,13 @@ Written entirely in C++ and SFML <br>
 >
 >Project TODO list:
 >- [x] visible terrain tiles
->- [ ] slicing delta if too high
+>- [ ] enemies, goombalike
+>- [ ] simple collectables
+>- [ ] proper chunking when collision
+>- [ ] loading levels
 >- [ ] proper program structure
 >- [ ] source files arrangement
->- [ ] proper chunking when collision
->- [ ] enemies, goombalike
->- [ ] loading levels
->- [ ] simple collectables
+>- [ ] slicing delta if too high
 >
 >Non essential TODO:
 >- [ ] adding terrain objects
