@@ -63,7 +63,7 @@ public:
 		if (lastCameraZone != nullptr)
 		{
 			if (restrictView)
-				handleRestrictView(outEntity, *lastCameraZone);
+				handleRestrictView(*lastCameraZone);
 			if (restrictEntity)
 				handleRestrictEntity(outEntity, *lastCameraZone, stopMarginHor, stopMarginVer);
 		}
@@ -83,7 +83,7 @@ public:
 			cameraZone->canInitiateTransition = true;
 
 			if (restrictView)
-				handleRestrictView(outEntity, *cameraZone);
+				handleRestrictView(*cameraZone);
 			if (restrictEntity)
 				handleRestrictEntity(outEntity, *cameraZone, stopMarginHor, stopMarginVer);
 		}
@@ -165,7 +165,7 @@ private:
 			verticalNotHorizontal ? TransitionKeyType::CAMERA_Y : TransitionKeyType::CAMERA_X, cameraTimeline);
 	}
 
-	void handleRestrictView(GravityEntity& outEntity, const CameraZone& zone)
+	void handleRestrictView(const CameraZone& zone)
 	{
 		const sf::FloatRect viewRect(view.getCenter() - view.getSize() / 2.f, view.getCenter() + view.getSize() / 2.f);
 

@@ -368,10 +368,10 @@ private:
 					chunk.width  = editorSettings.chunkWidth;
 					chunk.height = editorSettings.chunkHeight;
 
-					for (size_t y = 0; y < chunk.height; ++y)
+					for (int y = 0; y < chunk.height; ++y)
 					{
 						std::vector<int> vec;
-						for (size_t x = 0; x < chunk.width; ++x)
+						for (int x = 0; x < chunk.width; ++x)
 							vec.push_back(looseLevelData[j * chunk.height + y][i * chunk.width + x]);
 
 						chunk.data.push_back(vec);

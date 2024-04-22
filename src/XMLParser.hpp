@@ -62,7 +62,7 @@ public:
 		return true;
 	}
 
-	const XMLElement getRoot() { return root; }
+	XMLElement getRoot() const { return root; }
 
 	void printParsedData() { print(root, ""); }
 
@@ -104,6 +104,11 @@ private:
 			root = child;
 	}
 
+	bool signedLessThanUnsigned(int sig, uint32_t unsig)
+	{
+		return (sig < 0) ? true : (static_cast<unsigned int>(sig) < unsig);
+	}
+
 	bool process_line(const std::string& val)
 	{
 		auto line = val;
@@ -127,9 +132,9 @@ private:
 		std::string word = "";
 
 		int firstChar = 0;
-		int i         = -1;
+		int i         = 0;
 
-		while (++i != line.length())
+		for (; signedLessThanUnsigned(i, line.length()); ++i)
 		{
 			switch (line[i])
 			{
@@ -190,7 +195,8 @@ private:
 					break;
 
 				case '/':
-					if (!(i > 0 && line[i - 1] == '<') || (i < line.length() - 1 && line[i + 1] == '>'))
+					if (!(i > 0 && line[i - 1] == '<') ||
+						(signedLessThanUnsigned(i, line.length() - 1) && line[i + 1] == '>'))
 						break;
 
 					openingBracket = false;

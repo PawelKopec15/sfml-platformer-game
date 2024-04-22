@@ -7,7 +7,7 @@
 #include <valarray>
 #include <vector>
 
-#include "Area2D.hpp"
+#include "MaskAreaWizard.hpp"
 #include "BitmapFont.hpp"
 #include "Camera.hpp"
 #include "CollisionAlgorithms.hpp"

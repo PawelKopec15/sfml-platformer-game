@@ -15,7 +15,9 @@
 class Level
 {
 public:
-	ChunkMap<StaticTile> Collision = ChunkMap<StaticTile>({16, 12});
+	ChunkMap<StaticTile> Collision  = ChunkMap<StaticTile>();
+	ChunkMap<StaticTile> Background = ChunkMap<StaticTile>();
+	ChunkMap<StaticTile> Foreground = ChunkMap<StaticTile>();
 
 	Level()  = default;
 	~Level() = default;
@@ -24,7 +26,7 @@ public:
 	{
 		bool parseError = parser.parse(levelPath, print);
 
-		_handleLayers();
+		_handleTileLayers();
 
 		camera.findCameraZones(parser.getMap());
 
@@ -39,12 +41,17 @@ private:
 	TMXParser parser;
 	Camera camera;
 
-	void _handleCollisionLayer(const TMXLayer& collisionLayer)
+	ChunkMap<StaticTile> _parseTileLayer(const TMXLayer& layer)
 	{
 		const auto tileWidth  = parser.getMap().tileWidth;
 		const auto tileHeight = parser.getMap().tileHeight;
 
-		for (const auto& chunk : collisionLayer.chunks)
+		const auto chunkWidth  = parser.getMap().editorSettings.chunkWidth;
+		const auto chunkHeight = parser.getMap().editorSettings.chunkHeight;
+
+		auto toRet = ChunkMap<StaticTile>(sf::Vector2f(chunkWidth, chunkHeight));
+
+		for (const auto& chunk : layer.chunks)
 		{
 			for (size_t i = 0; i < chunk.second.data.size(); ++i)
 			{
@@ -55,26 +62,27 @@ private:
 					if (data <= 0)
 						continue;
 
-					// Collision[sf::Vector2f(chunk.first.first, chunk.first.second)].push_back(
-					// 	std::make_shared<StaticTile>(StaticTile(
-					// 		sf::Vector2f((chunk.first.first + j) * tileWidth, (chunk.first.second + i) * tileHeight),
-					// 		{(float)tileWidth, (float)tileHeight}, data - 1)));
-
-					Collision.insertNewValue(sf::Vector2i(chunk.first.first, chunk.first.second),
-											 StaticTile(sf::Vector2f((chunk.first.first + j) * tileWidth,
-																	 (chunk.first.second + i) * tileHeight),
-														{(float)tileWidth, (float)tileHeight}, data - 1));
+					toRet.insertNewValue(sf::Vector2i(chunk.first.first, chunk.first.second),
+										 StaticTile(sf::Vector2f((chunk.first.first + j) * tileWidth,
+																 (chunk.first.second + i) * tileHeight),
+													{(float)tileWidth, (float)tileHeight}, data - 1));
 				}
 			}
 		}
+
+		return toRet;
 	}
 
-	void _handleLayers()
+	void _handleTileLayers()
 	{
 		for (const auto& layer : parser.getMap().layers)
 		{
 			if (layer.second.name == "Collision")
-				_handleCollisionLayer(layer.second);
+				Collision = _parseTileLayer(layer.second);
+			else if (layer.second.name == "Background")
+				Background = _parseTileLayer(layer.second);
+			else if (layer.second.name == "Foreground")
+				Foreground = _parseTileLayer(layer.second);
 		}
 	}
 };

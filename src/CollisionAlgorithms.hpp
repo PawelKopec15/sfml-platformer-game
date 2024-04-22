@@ -24,7 +24,7 @@ public:
 	CollisionAlgorithms &operator=(const CollisionAlgorithms &) = delete;
 
 	sf::Vector2f AABBWithStaticBodiesCollisionCheck(ChunkMap<StaticTile> &outCollision, ColliderEntity &outEntity,
-													const std::vector<sf::Vector2i> &chunks, bool debugPrint = false)
+													const std::vector<sf::Vector2i> &chunks)
 	{
 		auto set = outCollision.gatherFromChunks(chunks);
 

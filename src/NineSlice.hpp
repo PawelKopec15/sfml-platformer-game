@@ -215,9 +215,9 @@ private:
 		const float extraPixelsHor = size.x - tilesHor * texSize.x;
 		const float extraPixelsVer = size.y - tilesVer * texSize.y;
 
-		for (size_t i = 0; i < tilesVer; ++i)
+		for (int i = 0; i < tilesVer; ++i)
 		{
-			for (size_t j = 0; j < tilesHor; ++j)
+			for (int j = 0; j < tilesHor; ++j)
 				addQuad(outDrawable, sf::Vector2f(pos.x + j * texSize.x, pos.y + i * texSize.y), texSize,
 						relativeTexPos, texSize, color);
 			if (extraPixelsHor > 0)
@@ -227,7 +227,7 @@ private:
 		}
 		if (extraPixelsVer > 0)
 		{
-			for (size_t j = 0; j < tilesHor; ++j)
+			for (int j = 0; j < tilesHor; ++j)
 				addQuad(outDrawable, sf::Vector2f(pos.x + j * texSize.x, pos.y + tilesHor * texSize.y),
 						sf::Vector2f(texSize.x, extraPixelsVer), relativeTexPos,
 						sf::Vector2f(texSize.x, extraPixelsVer), color);
