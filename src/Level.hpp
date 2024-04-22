@@ -7,15 +7,15 @@
 #include <string>
 #include <vector>
 
+#include "ChunkMap.hpp"
 #include "CollisionBody.hpp"
 #include "StaticTile.hpp"
 #include "TMXParser.hpp"
-#include "Vector2fFunctions.hpp"
 
 class Level
 {
 public:
-	std::map<sf::Vector2f, std::vector<std::shared_ptr<StaticTile>>, Vector2fCompare> Collision;
+	ChunkMap<StaticTile> Collision = ChunkMap<StaticTile>({16, 12});
 
 	Level()  = default;
 	~Level() = default;
@@ -55,10 +55,15 @@ private:
 					if (data <= 0)
 						continue;
 
-					Collision[sf::Vector2f(chunk.first.first, chunk.first.second)].push_back(
-						std::make_shared<StaticTile>(StaticTile(
-							sf::Vector2f((chunk.first.first + j) * tileWidth, (chunk.first.second + i) * tileHeight),
-							{(float)tileWidth, (float)tileHeight}, data - 1)));
+					// Collision[sf::Vector2f(chunk.first.first, chunk.first.second)].push_back(
+					// 	std::make_shared<StaticTile>(StaticTile(
+					// 		sf::Vector2f((chunk.first.first + j) * tileWidth, (chunk.first.second + i) * tileHeight),
+					// 		{(float)tileWidth, (float)tileHeight}, data - 1)));
+
+					Collision.insertNewValue(sf::Vector2i(chunk.first.first, chunk.first.second),
+											 StaticTile(sf::Vector2f((chunk.first.first + j) * tileWidth,
+																	 (chunk.first.second + i) * tileHeight),
+														{(float)tileWidth, (float)tileHeight}, data - 1));
 				}
 			}
 		}

@@ -4,6 +4,7 @@
 #include <deque>
 #include <memory>
 
+#include "ChunkMap.hpp"
 #include "ColliderEntity.hpp"
 #include "CollisionBody.hpp"
 #include "StaticTile.hpp"
@@ -22,26 +23,22 @@ public:
 	CollisionAlgorithms &operator=(CollisionAlgorithms &&) = delete;
 	CollisionAlgorithms &operator=(const CollisionAlgorithms &) = delete;
 
-	sf::Vector2f AABBWithStaticBodiesCollisionCheck(
-		std::map<sf::Vector2f, std::vector<std::shared_ptr<StaticTile>>, Vector2fCompare> &outCollision,
-		ColliderEntity &outEntity, const std::vector<sf::Vector2f> &chunks, bool debugPrint = false)
+	sf::Vector2f AABBWithStaticBodiesCollisionCheck(ChunkMap<StaticTile> &outCollision, ColliderEntity &outEntity,
+													const std::vector<sf::Vector2i> &chunks, bool debugPrint = false)
 	{
-		auto chunksVector = getChunksVector(outCollision, chunks);
+		auto set = outCollision.gatherFromChunks(chunks);
 
 		std::vector<sf::Vector2f> orientedOverlapVectors;
 
-		for (const auto &coord : chunksVector)
+		for (auto &cb : set)
 		{
-			for (auto &&cb : outCollision[coord])
+			if (cb->intersects(outEntity.accessCollider()))
 			{
-				if (cb->intersects(outEntity.accessCollider()))
-				{
-					cb->setColor(sf::Color(120, 180, 120, 96));
-					orientedOverlapVectors.push_back(outEntity.accessCollider().getOverlapVectorOriented(*cb));
-				}
-				else
-					cb->setColor(sf::Color(180, 180, 180, 96));
+				cb->setColor(sf::Color(120, 180, 120, 96));
+				orientedOverlapVectors.push_back(outEntity.accessCollider().getOverlapVectorOriented(*cb));
 			}
+			else
+				cb->setColor(sf::Color(180, 180, 180, 96));
 		}
 
 		for (auto &first : orientedOverlapVectors)
@@ -91,20 +88,4 @@ private:
 	CollisionAlgorithms() = default;
 
 	const float tccTolerance = 2.2f;
-
-	std::vector<sf::Vector2f> getChunksVector(
-		std::map<sf::Vector2f, std::vector<std::shared_ptr<StaticTile>>, Vector2fCompare> &outCollision,
-		const std::vector<sf::Vector2f> &chunks)
-	{
-		auto chunksVector = chunks;
-
-		// If no chunk coordinates are specified, everything goes
-		if (chunks.empty())
-		{
-			for (const auto &pair : outCollision)
-				chunksVector.push_back(pair.first);
-		}
-
-		return chunksVector;
-	}
 };

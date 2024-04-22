@@ -199,10 +199,9 @@ int main()
 
 		// Drawing tiles
 		sf::Sprite tile(levelTiles);
-		for (auto const& pair : level.Collision)
 		{
-			auto vector = pair.second;
-			for (auto&& cb : vector)
+			auto set = level.Collision.gatherFromChunks();
+			for (auto&& cb : set)
 			{
 				auto id     = cb->getTileId();
 				int texLeft = id % (uint32_t)(levelTiles.getSize().x / (uint32_t)cb->getSize().x) * cb->getSize().x;
@@ -218,12 +217,9 @@ int main()
 
 		if (debugMode)
 		{
-			for (auto const& pair : level.Collision)
-			{
-				auto vector = pair.second;
-				for (auto&& cb : vector)
-					window.draw(cb->getRectangleShape());
-			}
+			auto set = level.Collision.gatherFromChunks();
+			for (auto&& cb : set)
+				window.draw(cb->getRectangleShape());
 
 			window.draw(player.accessCollider().getRectangleShape());
 			window.draw(fontKubasta.getTextDrawable(debugText, debugTextPos).first, &fontKubasta.getFontTexture());

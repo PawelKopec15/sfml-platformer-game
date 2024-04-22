@@ -12,8 +12,7 @@ Developed with VS Code, with use of *[this handy cmake template](https://github.
 >- A simple .tmx parser, which allows the game to directly load level data created with *[Tiled level editor](https://www.mapeditor.org)*
 >- System for pretty and precise camera movement with old school screen transitions, with use of the key frame animation system and tmx parser
 >- Pixel perfect bitmap font parser and renderer
->- Very flexible nine slice texture parser and renderer
->
+>- ChunkMap data structure for chunking terrain and optimizations.
 
 ---
 

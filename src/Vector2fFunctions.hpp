@@ -35,3 +35,19 @@ struct Vector2fCompare
 		return lhs.y < rhs.y;
 	}
 };
+
+// Custom comparison function for sf::Vector2i
+struct Vector2iCompare
+{
+	bool operator()(const sf::Vector2i& lhs, const sf::Vector2i& rhs) const
+	{
+		// Compare x values first
+		if (lhs.x < rhs.x)
+			return true;
+		if (lhs.x > rhs.x)
+			return false;
+
+		// If x values are equal, compare y values
+		return lhs.y < rhs.y;
+	}
+};
