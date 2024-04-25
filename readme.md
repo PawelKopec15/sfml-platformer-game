@@ -20,12 +20,12 @@ When framerate limiter is disabled, the game runs at about 1000FPS on average.
 >- Very basic collectable and inventory system
 
 
-| Game controls : |||||
-|-----------------------|---|-------------------|---|---|
-| Left and Right arrows | - | movement          |   |   |
-| Left Shift            | - | dash              |   |   |
-| Z                     | - | jump              |   |   |
-| Numpad 0              | - | toggle debug mode |   |   |
+| Game controls : |||
+|-----------------------|---|-------------------|
+| Left and Right arrows | - | movement          |
+| Left Shift            | - | dash              |
+| Z                     | - | jump              |
+| Numpad 0              | - | toggle debug mode |
 
 <br>
 
