@@ -234,7 +234,7 @@ int main()
 		window.clear(debugMode ? sf::Color::Black : level.getBackgroundColor());
 
 		// Drawing tiles, backgrounds and collectables
-		// ugly placeholder code
+		// ugly placeholder code for testing
 		// TODO get rid of it
 		sf::Sprite tile(levelTiles);
 		{

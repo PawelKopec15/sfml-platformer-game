@@ -1,6 +1,10 @@
 A simple platform game demo/engine <br>
 Written entirely in C++ and SFML <br><br>
-Developed with VS Code, with use of *[this handy cmake template](https://github.com/SFML/cmake-sfml-project)*.
+Developed with VS Code, with use of *[this handy cmake template](https://github.com/SFML/cmake-sfml-project)*. <br>
+
+![GIF footage of gameplay](media/main_gameplay.gif)
+All graphical assets have been created by me, with the exception of [the font](https://zichy.itch.io/kubasta). <br>
+When framerate limiter is disabled, the game runs at about 1000FPS on average.
 
 >
 >Features I've implemented so far:
@@ -13,14 +17,43 @@ Developed with VS Code, with use of *[this handy cmake template](https://github.
 >- System for pretty and precise camera movement with old school screen transitions, with use of the key frame animation system and tmx parser
 >- Pixel perfect bitmap font parser and renderer
 >- ChunkMap data structure for chunking terrain and optimizations.
+>- Very basic collectable and inventory system
+
+
+| Game controls : |||||
+|-----------------------|---|-------------------|---|---|
+| Left and Right arrows | - | movement          |   |   |
+| Left Shift            | - | dash              |   |   |
+| Z                     | - | jump              |   |   |
+| Numpad 0              | - | toggle debug mode |   |   |
+
+<br>
+
+![GIF footage of debug mode](media/debug_gameplay.gif)
+
+| When in debug mode : |||
+|-----------------------|---|-------------------|
+| Numpad 5 | - | set framerate limiter to 144FPS (default)  |
+| Numpad 7 | - | set framerate limiter to 30FPS             |
+| Numpad 8 | - | set framerate limiter to 60FPS             |
+| Numpad 9 | - | disable framerate limiter (watch Your graphics card!)            |
+| Numpad 0              | - | toggle debug mode |
+
+**Also when in debug mode:** <br>
+- Delta (time passed in microseconds) and FPS for current frame will be shown <br>
+- All colliders and interesting boxes will be visible <br>
+- CollisionBodies the player currently interacts with will be highlighted
+
+<br>
+
 
 ---
 
 >
 >Project TODO list:
 >- [x] visible terrain tiles
->- [ ] simple collectables
->- [ ] inventory hud
+>- [X] simple collectables
+>- [X] inventory hud
 >- [ ] enemies, goombalike
 >- [ ] proper chunking when collision
 >- [ ] loading levels
