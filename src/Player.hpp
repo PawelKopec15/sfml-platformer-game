@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "HitboxEntity.hpp"
+#include "MaskArea2D.hpp"
 #include "Timer.hpp"
 
 class Controls
@@ -73,7 +74,9 @@ class Player : public ColliderEntity
 {
 public:
 	Player(const sf::Vector2f& position, const Controls& controls)
-		: ColliderEntity(position, sf::Vector2f(14.f, 14.f), sf::Vector2f(-7.f, -7.f)), controls(controls)
+		: ColliderEntity(position, sf::Vector2f(14.f, 14.f), sf::Vector2f(-7.f, -7.f)),
+		  controls(controls),
+		  collectBox(std::make_shared<MaskArea2D>(MaskArea2D(position - sf::Vector2f(6.f, 18.f), {12.f, 24.f}, 0, 1)))
 	{}
 	~Player() override = default;
 
@@ -188,8 +191,24 @@ public:
 	// sf::Int64 getOnGroundTimerTimeLeft() const { return onGroundTimer.getTimeLeft(); }
 	bool getCanJump() const { return !coyoteTimer.hasTimedOut(); }
 
+	void setPosition(const sf::Vector2f& position) override
+	{
+		this->ColliderEntity::setPosition(position);
+		collectBox->setPosition(position - sf::Vector2f(6.f, 18.f));
+	}
+
+	void move(const sf::Vector2f& offset) override
+	{
+		this->ColliderEntity::move(offset);
+		collectBox->move(offset);
+	}
+
+	std::shared_ptr<MaskArea2D> getCollectBox() const { return collectBox; }
+
 private:
 	Controls controls;
+
+	std::shared_ptr<MaskArea2D> collectBox;
 
 	Timer coyoteTimer = Timer(0.05f);
 

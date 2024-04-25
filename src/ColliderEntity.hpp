@@ -21,7 +21,7 @@ public:
 
 	void process(sf::Int64 delta) override { this->GravityEntity::process(delta); }
 
-	void setPosition(const sf::Vector2f& position) override
+	virtual void setPosition(const sf::Vector2f& position) override
 	{
 		this->GravityEntity::setPosition(position);
 		collider.setPosition(position + colliderOffset);
@@ -29,7 +29,7 @@ public:
 	void setColliderSize(const sf::Vector2f& size) { collider.setSize(size); }
 	void setColliderOffset(const sf::Vector2f& val) { colliderOffset = val; }
 
-	void move(const sf::Vector2f& offset) override
+	virtual void move(const sf::Vector2f& offset) override
 	{
 		this->GravityEntity::move(offset);
 		collider.move(offset);

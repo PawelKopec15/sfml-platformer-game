@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <memory>
 
 #include "AnimatedSprite.hpp"
 #include "GlobalDefines.hpp"
@@ -34,7 +35,7 @@ public:
 	void setSpriteTextureRect(const sf::IntRect& rect) { sprite.setTextureRect(rect); }
 	void setSpriteOffset(const sf::Vector2f& offset) { sprite.setOffset(offset); }
 	const sf::Sprite& getSprite() { return sprite.get(); }
-	void addAnimation(const std::string& name, const KeyFrameAnimator<SpriteKeyType>& animation)
+	void addAnimation(const std::string& name, const KeyFrameAnimator<AnimatedSprite::KeyType>& animation)
 	{
 		sprite.addAnimation(name, animation);
 	}

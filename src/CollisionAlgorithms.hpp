@@ -8,7 +8,7 @@
 #include "ColliderEntity.hpp"
 #include "CollisionBody.hpp"
 #include "StaticTile.hpp"
-#include "Vector2fFunctions.hpp"
+#include "Vector2Functions.hpp"
 
 class CollisionAlgorithms
 {
@@ -24,7 +24,7 @@ public:
 	CollisionAlgorithms &operator=(const CollisionAlgorithms &) = delete;
 
 	sf::Vector2f AABBWithStaticBodiesCollisionCheck(ChunkMap<StaticTile> &outCollision, ColliderEntity &outEntity,
-													const std::vector<sf::Vector2i> &chunks)
+													const std::set<sf::Vector2i, Vector2iCompare> &chunks)
 	{
 		auto set = outCollision.gatherFromChunks(chunks);
 

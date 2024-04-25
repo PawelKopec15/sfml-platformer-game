@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "Vector2fFunctions.hpp"
+#include "Vector2Functions.hpp"
 
 template <typename T>
 class ChunkMap
@@ -91,6 +91,8 @@ public:
 
 	sf::Vector2f getChunkSize() const { return chunkSize; }
 	void setChunkSize(const sf::Vector2f& val) { chunkSize = val; }
+
+	std::map<sf::Vector2i, std::vector<std::shared_ptr<T>>, Vector2iCompare>& accessMap() { return chunkMap; }
 
 private:
 	std::map<sf::Vector2i, std::vector<std::shared_ptr<T>>, Vector2iCompare> chunkMap;

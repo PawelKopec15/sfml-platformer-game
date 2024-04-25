@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <list>
 #include <map>
 #include <memory>
 #include <sstream>
@@ -8,6 +9,7 @@
 #include <vector>
 
 #include "ChunkMap.hpp"
+#include "Collectable.hpp"
 #include "CollisionBody.hpp"
 #include "StaticTile.hpp"
 #include "TMXParser.hpp"
@@ -15,11 +17,12 @@
 class Level
 {
 public:
-	ChunkMap<StaticTile> Collision  = ChunkMap<StaticTile>();
-	ChunkMap<StaticTile> Background = ChunkMap<StaticTile>();
-	ChunkMap<StaticTile> Foreground = ChunkMap<StaticTile>();
+	ChunkMap<StaticTile> Collision      = ChunkMap<StaticTile>();
+	ChunkMap<StaticTile> Background     = ChunkMap<StaticTile>();
+	ChunkMap<StaticTile> Foreground     = ChunkMap<StaticTile>();
+	std::list<Collectable> Collectables = std::list<Collectable>();
 
-	Level()  = default;
+	explicit Level(const AnimatedSprite& coinSprite) : coinSprite(coinSprite) {}
 	~Level() = default;
 
 	bool create(const std::string& levelPath, bool print = false)
@@ -40,6 +43,8 @@ public:
 private:
 	TMXParser parser;
 	Camera camera;
+
+	AnimatedSprite coinSprite;
 
 	ChunkMap<StaticTile> _parseTileLayer(const TMXLayer& layer)
 	{
@@ -62,10 +67,20 @@ private:
 					if (data <= 0)
 						continue;
 
-					toRet.insertNewValue(sf::Vector2i(chunk.first.first, chunk.first.second),
-										 StaticTile(sf::Vector2f((chunk.first.first + j) * tileWidth,
-																 (chunk.first.second + i) * tileHeight),
-													{(float)tileWidth, (float)tileHeight}, data - 1));
+					const auto position =
+						sf::Vector2f((chunk.first.first + j) * tileWidth, (chunk.first.second + i) * tileHeight);
+
+					const auto currentChunk = sf::Vector2i(chunk.first.first, chunk.first.second);
+
+					if (data < 255)
+					{
+						toRet.insertNewValue(currentChunk,
+											 StaticTile(position, {(float)tileWidth, (float)tileHeight}, data - 1));
+					}
+					else
+					{
+						Collectables.push_back(Collectable(position, 1, {16.f, 16.f}, coinSprite));
+					}
 				}
 			}
 		}
