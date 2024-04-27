@@ -2,7 +2,8 @@ A simple platform game demo/engine <br>
 Written entirely in C++ and SFML <br><br>
 Developed with VS Code, with use of *[this handy cmake template](https://github.com/SFML/cmake-sfml-project)*. <br>
 
-![GIF footage of gameplay](media/main_gameplay.gif)
+![Screenshot of the game](media/screenshot.png)
+
 All graphical assets have been created by me, with the exception of [the font](https://zichy.itch.io/kubasta). <br>
 When framerate limiter is disabled, the game runs at about 1000FPS on average.
 
@@ -19,6 +20,9 @@ When framerate limiter is disabled, the game runs at about 1000FPS on average.
 >- ChunkMap data structure for chunking terrain and optimizations.
 >- Very basic collectable and inventory system
 
+<br>
+
+![GIF footage of gameplay](media/main_gameplay.gif)
 
 | Game controls : |||
 |-----------------------|---|-------------------|
@@ -63,9 +67,9 @@ When framerate limiter is disabled, the game runs at about 1000FPS on average.
 >
 >Non essential TODO:
 >- [ ] adding terrain objects
->- [ ] bouncy objects
+>- [ ] special interactable tiles
 >- [ ] slopes
 >- [ ] global variables singleton
->- [ ] one way collisions
+>- [ ] one way collisions and tiles
 >- [ ] tileset texture files being deduced from .tmx file
 >
